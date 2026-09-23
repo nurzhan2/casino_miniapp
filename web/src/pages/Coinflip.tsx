@@ -3,11 +3,12 @@ import { useApp } from '../lib/store';
 import { api, fmt, haptic, sleep } from '../lib/api';
 import { TopBar, BetInput } from '../ui/kit';
 import { Logo, Bolt, StarIcon } from '../ui/icons';
+import { Emo } from '../ui/emoji';
 
 const SIDES = [
-  { k: 'heads', t: 'Орёл', Ic: Logo, c: 'from-[#3bc9ff] to-[#0e5f86]' },
-  { k: 'edge', t: 'Ребро', Ic: Bolt, c: 'from-[#ff5a5a] to-[#7d1c1c]' },
-  { k: 'tails', t: 'Решка', Ic: StarIcon, c: 'from-[#8b5cff] to-[#3b1d8a]' },
+  { k: 'heads', t: 'Орёл', e: 'kong', c: 'from-[#3bc9ff] to-[#0e5f86]' },
+  { k: 'edge', t: 'Ребро', e: 'bolt', c: 'from-[#ff5a5a] to-[#7d1c1c]' },
+  { k: 'tails', t: 'Решка', e: 'banana', c: 'from-[#8b5cff] to-[#3b1d8a]' },
 ];
 
 export default function Coinflip() {
@@ -44,15 +45,15 @@ export default function Coinflip() {
       <div className="card mt-2 h-64 grid place-items-center relative overflow-hidden" style={{ perspective: 800 }}>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_60%,#b6ff3b1f,transparent_60%)]" />
         <div className="relative w-36 h-36" style={{ transformStyle: 'preserve-3d', transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`, transition: spinning ? 'transform 2.6s cubic-bezier(.15,.7,.1,1)' : 'none' }}>
-          <div className="absolute inset-0 rounded-full grid place-items-center bg-gradient-to-br from-banana to-[#c98a00] border-4 border-[#ffe98a] shadow-2xl" style={{ backfaceVisibility: 'hidden' }}><Logo size={86} /></div>
-          <div className="absolute inset-0 rounded-full grid place-items-center bg-gradient-to-br from-lime to-[#5e9b10] border-4 border-[#e2ffb0] shadow-2xl" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}><StarIcon size={72} /></div>
+          <div className="absolute inset-0 rounded-full grid place-items-center bg-gradient-to-br from-banana to-[#c98a00] border-4 border-[#ffe98a] shadow-2xl" style={{ backfaceVisibility: 'hidden' }}><Emo n="kong" size={96} /></div>
+          <div className="absolute inset-0 rounded-full grid place-items-center bg-gradient-to-br from-lime to-[#5e9b10] border-4 border-[#e2ffb0] shadow-2xl" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}><Emo n="banana" size={92} /></div>
         </div>
         {res && <div className={`absolute bottom-4 font-display pop ${res.payout > 0 ? 'text-lime glow' : 'text-danger'}`}>
           {res.payout > 0 ? `+${fmt(res.payout)}★` : `${SIDES.find(s => s.k === res.result)?.t} — мимо`}</div>}
       </div>
 
       <div className="flex gap-1.5 py-2 overflow-x-auto no-scrollbar">
-        {recent.map((r, i) => <span key={i} className="w-7 h-7 rounded-lg bg-moss grid place-items-center text-white/70">{(() => { const I = SIDES.find(s => s.k === r)?.Ic; return I ? <I size={15} /> : null; })()}</span>)}
+        {recent.map((r, i) => <span key={i} className="w-7 h-7 rounded-lg bg-moss grid place-items-center text-white/70"><Emo n={SIDES.find(s => s.k === r)?.e || 'coin'} size={20} /></span>)}
       </div>
 
       <div className="card p-4 space-y-3">
@@ -60,7 +61,7 @@ export default function Coinflip() {
         <div className="grid grid-cols-3 gap-2">
           {SIDES.map(s => (
             <button key={s.k} disabled={spinning} onClick={() => flip(s.k)} className={`bg-gradient-to-br ${s.c} rounded-2xl py-3.5 font-extrabold active:scale-95 transition`}>
-              <div className="flex justify-center mb-1"><s.Ic size={22} /></div>
+              <div className="flex justify-center mb-1"><Emo n={s.e} size={34} /></div>
               <div className="text-sm">{s.t}</div>
               <div className="text-xs opacity-80">×{odds[s.k]}</div>
             </button>

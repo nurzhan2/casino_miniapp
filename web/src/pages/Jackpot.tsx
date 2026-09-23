@@ -3,6 +3,7 @@ import { useApp } from '../lib/store';
 import { api, fmt, haptic } from '../lib/api';
 import { TopBar, BetInput, Avatar, Star, useCountdown } from '../ui/kit';
 import { Logo } from '../ui/icons';
+import { Emo } from '../ui/emoji';
 
 /** Колесо PvP: сегменты по долям, указатель сверху */
 function Wheel({ s, spinning }: { s: any; spinning: boolean }) {
@@ -98,7 +99,7 @@ export default function Jackpot({ kind }: { kind: 'pvp' | 'arena' }) {
           <div className="text-center w-28">
             {showResult && winner ? <div className="pop"><Avatar src={winner.photo} name={winner.name} size={40} /><div className="text-xs font-extrabold mt-1 truncate">{winner.name}</div></div>
               : s.phase === 'countdown' ? <div className="font-display text-3xl">{Math.ceil(left)}</div>
-              : spinning ? <Logo size={44} className="mx-auto" />
+              : spinning ? <Emo n={kind === 'pvp' ? 'wheel' : 'swords'} size={52} className="mx-auto" />
               : <div className="text-xs text-white/60 font-bold">Ждём второго игрока</div>}
           </div>
         </div>}

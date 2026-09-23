@@ -3,6 +3,7 @@ import { useApp } from '../lib/store';
 import { api, fmt, haptic, sleep } from '../lib/api';
 import { TopBar, BetInput } from '../ui/kit';
 import { Bomb, Gem } from '../ui/icons';
+import { Emo } from '../ui/emoji';
 
 export default function Mines() {
   const { refresh, toast } = useApp();
@@ -64,7 +65,7 @@ export default function Mines() {
                   ${pending === c ? 'shake bg-banana/30' : ''}
                   ${shown ? (bomb ? (hit ? 'bg-danger pop' : 'bg-danger/25') : 'bg-lime/20 pop') : 'bg-moss border border-white/10 active:scale-95'}`}
                 style={{ opacity: !open && !shown && g ? 0.5 : 1 }}>
-                {shown ? (bomb ? <Bomb size={cols === 7 ? 18 : cols === 5 ? 26 : 40} className="text-white" /> : <Gem size={cols === 7 ? 18 : cols === 5 ? 26 : 40} className="text-lime" />) : pending === c ? <span className="w-2 h-2 rounded-full bg-banana animate-ping" /> : null}
+                {shown ? (bomb ? <Emo n="bomb" size={cols === 7 ? 24 : cols === 5 ? 36 : 54} /> : <Emo n="gem" size={cols === 7 ? 24 : cols === 5 ? 36 : 54} />) : pending === c ? <span className="w-2 h-2 rounded-full bg-banana animate-ping" /> : null}
               </button>
             );
           })}

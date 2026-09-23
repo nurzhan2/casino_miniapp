@@ -3,6 +3,7 @@ import { useApp } from '../lib/store';
 import { api, fmt } from '../lib/api';
 import { Avatar, Star, useCountdown } from '../ui/kit';
 import { Trophy } from '../ui/icons';
+import { Emo } from '../ui/emoji';
 
 const MEDAL_STYLE = ['from-[#ffd76a] to-[#e0a000] text-[#3a2800]', 'from-[#dfe7ee] to-[#9fb0bf] text-[#1d2630]', 'from-[#e7a86a] to-[#b06a2c] text-[#2e1806]'];
 
@@ -31,7 +32,7 @@ export default function Leaders() {
       <div className="grid grid-cols-3 gap-2 items-end mt-4">
         {podium.map(({ r, prize, place }) => (
           <div key={place} className={`card text-center p-3 ${place === 1 ? 'pb-6 border-banana/40 bg-gradient-to-b from-banana/15 to-transparent' : ''}`}>
-            <div className={`mx-auto w-8 h-8 rounded-full grid place-items-center font-display text-sm bg-gradient-to-br ${MEDAL_STYLE[place - 1]}`}>{place}</div>
+            <Emo n={`medal${place}`} size={place === 1 ? 40 : 32} className="mx-auto" />
             <div className="flex justify-center my-2"><Avatar src={r?.photo} name={r?.name ?? '?'} size={place === 1 ? 52 : 40} /></div>
             <div className="text-xs font-extrabold truncate">{r?.name ?? '—'}</div>
             <div className="text-[10px] text-white/50">{r ? `${fmt(r.wagered)}★` : 'свободно'}</div>

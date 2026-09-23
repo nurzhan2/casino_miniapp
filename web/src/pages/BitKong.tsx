@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useApp } from '../lib/store';
 import { api, fmt, haptic, tg } from '../lib/api';
 import { Logo } from '../ui/icons';
+import { Emo } from '../ui/emoji';
 
 export default function BitKong() {
   const { me, refresh, toast } = useApp();
@@ -25,7 +26,7 @@ export default function BitKong() {
     <div className="px-4 space-y-3 mt-1">
       <div className="card p-5 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,#b6ff3b33,transparent_65%)]" />
-        <div className="float relative flex justify-center"><Logo size={96} /></div>
+        <div className="float relative flex justify-center"><Emo n="kong" size={112} className="drop-shadow-[0_12px_28px_rgba(0,0,0,.55)]" /></div>
         <div className="font-display text-2xl mt-2 relative">BitKong кэшбэк</div>
         <div className="text-sm text-white/60 relative">Процент с каждой ставки — неважно, выиграл или проиграл</div>
         <div className="font-display text-5xl text-lime glow mt-4 relative tabular-nums">{me.cashback.toFixed(2)}<span className="text-banana">★</span></div>
