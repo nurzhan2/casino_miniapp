@@ -3,6 +3,7 @@ import { useApp } from '../lib/store';
 import { api, fmt, haptic } from '../lib/api';
 import { TopBar, BetInput } from '../ui/kit';
 import { Emo } from '../ui/emoji';
+import { win as fxWin, lose as fxLose } from '../lib/fx';
 
 const COLORS = ['#b6ff3b', '#ffb13b', '#3bc9ff', '#ff3bd4', '#8b5cff', '#ff5a5a', '#2c3c31'];
 
@@ -30,7 +31,7 @@ export default function Roulette() {
       await new Promise(s => setTimeout(s, 4200));
       setRes(r);
       setLog(l => [{ ...r, id: Date.now() }, ...l].slice(0, 10));
-      if (r.payout > 0) { haptic('success'); toast(`+${fmt(r.payout)}★`); } else haptic('error');
+      if (r.payout > 0) { haptic('success'); fxWin(r.payout, r.multiplier, amount); } else { haptic('error'); fxLose('Мимо'); }
       refresh();
     } catch (e: any) { toast(e.message, 'err'); } finally { busy.current = false; setSpin(false); }
   };

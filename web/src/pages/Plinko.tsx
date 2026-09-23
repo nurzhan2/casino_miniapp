@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useApp } from '../lib/store';
 import { api, fmt, haptic } from '../lib/api';
 import { TopBar, BetInput } from '../ui/kit';
+import { win as fxWin, lose as fxLose } from '../lib/fx';
 
 const RISKS: [string, string][] = [['low', 'Низкий'], ['mid', 'Средний'], ['high', 'Высокий']];
 
@@ -26,7 +27,7 @@ export default function Plinko() {
       const r = await api('/api/plinko', { amount, rows, risk });
       await animate(r.path);
       setHits(h => [{ slot: r.slot, m: r.multiplier, id: Date.now() }, ...h].slice(0, 8));
-      if (r.payout > amount) { haptic('success'); toast(`+${fmt(r.payout)}★ на ×${r.multiplier}`); }
+      if (r.payout > amount) { haptic('success'); fxWin(r.payout, r.multiplier, amount); }
       else haptic('warning');
       refresh();
     } catch (e: any) { toast(e.message, 'err'); } finally { setBusy(false); setBall(null); }

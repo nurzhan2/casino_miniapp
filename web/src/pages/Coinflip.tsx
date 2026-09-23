@@ -4,6 +4,7 @@ import { api, fmt, haptic, sleep } from '../lib/api';
 import { TopBar, BetInput } from '../ui/kit';
 import { Logo, Bolt, StarIcon } from '../ui/icons';
 import { Emo } from '../ui/emoji';
+import { win as fxWin, lose as fxLose } from '../lib/fx';
 
 const SIDES = [
   { k: 'heads', t: 'Орёл', e: 'kong', c: 'from-[#3bc9ff] to-[#0e5f86]' },
@@ -34,7 +35,7 @@ export default function Coinflip() {
       await sleep(2600);
       setRes(r);
       setRecent(x => [r.result, ...x].slice(0, 12));
-      if (r.payout > 0) { haptic('success'); toast(`+${fmt(r.payout)}★`); } else haptic('error');
+      if (r.payout > 0) { haptic('success'); fxWin(r.payout, r.multiplier, amount); } else { haptic('error'); fxLose('Мимо'); }
       refresh();
     } catch (e: any) { toast(e.message, 'err'); } finally { setSpinning(false); }
   };

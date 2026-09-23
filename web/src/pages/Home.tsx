@@ -18,15 +18,15 @@ const SOLO = [
   { k: 'upgrade', t: 'Апгрейд', d: 'Свой множитель и свой риск', e: 'glowstar', a: '#ffd43b', b: '#8a6100' },
 ];
 
-function Tile({ g, tall }: { g: any; tall?: boolean }) {
+function Tile({ g, tall, i = 0 }: { g: any; tall?: boolean; i?: number }) {
   const { go, jackpots, crash } = useApp();
   const jp = jackpots[g.k];
   const extra = g.k === 'crash' && crash?.history?.length ? `Последний раунд ×${crash.history[0]}`
     : jp ? (jp.players.length ? `Банк ${fmt(jp.total)} · игроков ${jp.players.length}` : 'Ждём игроков') : null;
   return (
     <button onClick={() => go(g.k)}
-      className={`relative overflow-hidden text-left rounded-[22px] p-4 w-full active:scale-[.985] transition ${tall ? 'h-40' : 'h-[112px]'}`}
-      style={{ background: `linear-gradient(145deg, ${g.a}, ${g.b})` }}>
+      className={`tile-in relative overflow-hidden text-left rounded-[22px] p-4 w-full active:scale-[.96] transition ${tall ? 'h-40' : 'h-[112px]'}`}
+      style={{ background: `linear-gradient(145deg, ${g.a}, ${g.b})`, animationDelay: `${i * 45}ms` }}>
       <div className="absolute inset-0" style={{ background: 'radial-gradient(120% 90% at 100% 0%, #ffffff26, transparent 60%)' }} />
       <Emo n={g.e} size={tall ? 132 : 118}
         className={`absolute drop-shadow-[0_10px_24px_rgba(0,0,0,.45)] ${tall ? '-right-6 -bottom-7' : '-right-5 -bottom-7'}`} />
@@ -61,12 +61,12 @@ export default function Home() {
 
       <section>
         <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-white/40 mb-2.5 px-0.5">PvP</div>
-        <div className="grid grid-cols-2 gap-3">{PVP.map(g => <Tile key={g.k} g={g} tall />)}</div>
+        <div className="grid grid-cols-2 gap-3">{PVP.map((g, i) => <Tile key={g.k} g={g} tall i={i} />)}</div>
       </section>
 
       <section>
         <div className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-white/40 mb-2.5 px-0.5">Соло</div>
-        <div className="space-y-3">{SOLO.map(g => <Tile key={g.k} g={g} />)}</div>
+        <div className="space-y-3">{SOLO.map((g, i) => <Tile key={g.k} g={g} i={i + 2} />)}</div>
       </section>
     </div>
   );

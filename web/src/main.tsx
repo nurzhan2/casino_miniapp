@@ -4,6 +4,8 @@ import './index.css';
 import { login, connectWs } from './lib/api';
 import { AppProvider, useApp } from './lib/store';
 import { Header, LiveStrip, BottomNav } from './ui/kit';
+import { FxOverlay } from './ui/Fx';
+import { initRipples } from './lib/fx';
 import Home from './pages/Home';
 import Crash from './pages/Crash';
 import Mines from './pages/Mines';
@@ -33,6 +35,7 @@ function Screens() {
       {tabs.includes(screen) && <><Header /><LiveStrip /></>}
       <div key={screen}>{page[screen] ?? <Home />}</div>
       {tabs.includes(screen) && <BottomNav />}
+      <FxOverlay />
     </div>
   );
 }
@@ -40,7 +43,7 @@ function Screens() {
 function Root() {
   const [me, setMe] = useState<any>(null);
   const [err, setErr] = useState('');
-  useEffect(() => { login().then(m => { setMe(m); connectWs(); }).catch(e => setErr(e.message)); }, []);
+  useEffect(() => { initRipples(); login().then(m => { setMe(m); connectWs(); }).catch(e => setErr(e.message)); }, []);
   if (err) return <div className="h-full grid place-items-center p-8 text-center"><div><div className="flex justify-center mb-4"><Logo size={64} /></div>{err}</div></div>;
   if (!me) return <div className="h-full grid place-items-center"><div className="float"><Logo size={72} /></div></div>;
   return <AppProvider initialMe={me}><Screens /></AppProvider>;

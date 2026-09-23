@@ -4,6 +4,7 @@ import { api, fmt, haptic, sleep } from '../lib/api';
 import { TopBar, BetInput } from '../ui/kit';
 import { Bomb, Gem } from '../ui/icons';
 import { Emo } from '../ui/emoji';
+import { win as fxWin, lose as fxLose } from '../lib/fx';
 
 export default function Mines() {
   const { refresh, toast } = useApp();
@@ -35,15 +36,15 @@ export default function Mines() {
     try {
       const [r] = await Promise.all([api('/api/mines/reveal', { cell }), sleep(350 + risk * 900)]);
       setG(r);
-      if (r.status === 'lost') haptic('error');
-      else if (r.status === 'won') { haptic('success'); toast(`Все бананы собраны! +${fmt(r.payout)}★`); refresh(); }
+      if (r.status === 'lost') { haptic('error'); fxLose('Взрыв!'); }
+      else if (r.status === 'won') { haptic('success'); fxWin(r.payout, r.multiplier, r.amount); refresh(); }
       else haptic('light');
     } catch (e: any) { toast(e.message, 'err'); } finally { setPending(null); }
   };
 
   const cashout = async () => {
     setBusy(true);
-    try { const r = await api('/api/mines/cashout', {}); setG(r); haptic('success'); toast(`+${fmt(r.payout)}★ на ×${r.multiplier}`); refresh(); }
+    try { const r = await api('/api/mines/cashout', {}); setG(r); haptic('success'); fxWin(r.payout, r.multiplier, r.amount); refresh(); }
     catch (e: any) { toast(e.message, 'err'); } finally { setBusy(false); }
   };
 

@@ -3,6 +3,7 @@ import { useApp } from '../lib/store';
 import { api, fmt, haptic } from '../lib/api';
 import { TopBar, BetInput } from '../ui/kit';
 import { Emo } from '../ui/emoji';
+import { win as fxWin, lose as fxLose } from '../lib/fx';
 
 export default function Upgrade() {
   const { me, refresh, toast } = useApp();
@@ -25,7 +26,7 @@ export default function Upgrade() {
       setRot(x => Math.ceil(x / 360) * 360 + 360 * 5 + r.roll * 360);
       await new Promise(s => setTimeout(s, 3400));
       setRes(r);
-      if (r.win) { haptic('success'); toast(`+${fmt(r.payout)}★`); } else haptic('error');
+      if (r.win) { haptic('success'); fxWin(r.payout, r.target, amount); } else { haptic('error'); fxLose('Апгрейд не прошёл'); }
       refresh();
     } catch (e: any) { toast(e.message, 'err'); } finally { busy.current = false; setSpin(false); }
   };

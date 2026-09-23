@@ -4,6 +4,7 @@ import { api, fmt, haptic } from '../lib/api';
 import { TopBar, BetInput, Avatar, Star, useCountdown } from '../ui/kit';
 import { Logo } from '../ui/icons';
 import { Emo } from '../ui/emoji';
+import { win as fxWin, lose as fxLose } from '../lib/fx';
 
 /** Колесо PvP: сегменты по долям, указатель сверху */
 function Wheel({ s, spinning }: { s: any; spinning: boolean }) {
@@ -77,7 +78,12 @@ export default function Jackpot({ kind }: { kind: 'pvp' | 'arena' }) {
 
   useEffect(() => {
     if (!spinning) { setShowResult(false); return; }
-    const t = setTimeout(() => { setShowResult(true); haptic(s.winner === me.id ? 'success' : 'warning'); refresh(); }, s.spinMs);
+    const t = setTimeout(() => {
+      setShowResult(true);
+      if (s.winner === me.id) { haptic('success'); fxWin(s.payout, undefined, my?.amount); }
+      else { haptic('warning'); fxLose('Банк ушёл сопернику'); }
+      refresh();
+    }, s.spinMs);
     return () => clearTimeout(t);
   }, [spinning, s?.id]);
 

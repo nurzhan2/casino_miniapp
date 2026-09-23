@@ -3,6 +3,7 @@ import { useApp } from '../lib/store';
 import { api, fmt, haptic } from '../lib/api';
 import { TopBar } from '../ui/kit';
 import { Emo } from '../ui/emoji';
+import { win as fxWin, lose as fxLose } from '../lib/fx';
 
 const ICON = ['gem', 'coin', 'banana', 'bag', 'glowstar'];
 const ITEM_W = 92;
@@ -33,7 +34,7 @@ export default function Cases() {
       haptic('medium');
       await new Promise(s => setTimeout(s, 4400));
       setRes(r);
-      if (r.payout > c.price) { haptic('success'); toast(`+${fmt(r.payout)}★ на ×${r.multiplier}`); } else haptic('warning');
+      if (r.payout > c.price) { haptic('success'); fxWin(r.payout, r.multiplier, c.price); } else haptic('warning');
       refresh();
     } catch (e: any) { toast(e.message, 'err'); } finally { busy.current = false; setSpin(false); }
   };

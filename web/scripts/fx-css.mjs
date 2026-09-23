@@ -1,52 +1,9 @@
-@import "tailwindcss";
+import { readFileSync, writeFileSync } from 'node:fs';
+const P = 'C:/Users/user/Projects/bitkong/web/src/';
 
-@theme {
-  --color-jungle: #0a130d;
-  --color-leaf: #111d15;
-  --color-moss: #1a2a1f;
-  --color-vine: #26402f;
-  --color-lime: #b6ff3b;
-  --color-banana: #ffd43b;
-  --color-berry: #ff3bd4;
-  --color-danger: #ff4d4d;
-  --font-display: "Unbounded", system-ui, sans-serif;
-  --font-sans: "Manrope", system-ui, sans-serif;
-}
-
-html, body, #root { height: 100%; }
-body {
-  margin: 0; background: var(--color-jungle); color: #eaf5ec; font-family: var(--font-sans);
-  -webkit-tap-highlight-color: transparent; overscroll-behavior: none; user-select: none;
-  background-image:
-    radial-gradient(ellipse 80% 40% at 50% -10%, #b6ff3b22, transparent 70%),
-    radial-gradient(ellipse 60% 30% at 100% 100%, #ff3bd415, transparent 70%);
-  background-attachment: fixed;
-}
-button { cursor: pointer; }
-button:disabled { opacity: .45; cursor: default; }
-input { font: inherit; }
-
-.card { background: linear-gradient(180deg, #16241a, #0e1912); border: 1px solid #ffffff0e; border-radius: 22px; box-shadow: 0 1px 0 #ffffff0a inset, 0 14px 30px -20px #000; }
-.btn-lime { background: linear-gradient(180deg, #c8ff5e, #9de81f); color: #0a130d; font-weight: 800; letter-spacing: -.01em; border-radius: 14px; box-shadow: 0 8px 24px -8px #b6ff3b80; transition: transform .1s; }
-.btn-lime:active { transform: scale(.975); }
-.btn-ghost { background: #ffffff0a; border: 1px solid #ffffff12; border-radius: 12px; font-weight: 700; color: #eaf5ec; }
-.font-display { font-family: var(--font-display); letter-spacing: -.02em; font-weight: 700; }
-.glow { text-shadow: 0 0 28px #b6ff3b80; }
-.no-scrollbar::-webkit-scrollbar { display: none; }
-
-@keyframes shake { 0%,100% { transform: translate(0) } 20% { transform: translate(-3px, 1px) rotate(-2deg) } 40% { transform: translate(3px,-1px) rotate(2deg) } 60% { transform: translate(-2px,1px) } 80% { transform: translate(2px,0) } }
-.shake { animation: shake .18s linear infinite; }
-@keyframes pop { 0% { transform: scale(.4); opacity: 0 } 70% { transform: scale(1.15) } 100% { transform: scale(1); opacity: 1 } }
-.pop { animation: pop .35s ease-out both; }
-@keyframes pulse-lime { 0%,100% { box-shadow: 0 0 0 0 #b6ff3b66 } 50% { box-shadow: 0 0 0 10px #b6ff3b00 } }
-.pulse-lime { animation: pulse-lime 1.2s infinite; }
-@keyframes flash-red { 0% { background: #ff4d4d55 } 100% { background: transparent } }
-.flash-red { animation: flash-red .8s ease-out; }
-@keyframes slide-in { from { transform: translateX(-20px); opacity: 0 } to { transform: none; opacity: 1 } }
-.slide-in { animation: slide-in .3s ease-out; }
-@keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
-.float { animation: float 3s ease-in-out infinite; }
-
+// 1. CSS эффектов
+let css = readFileSync(P + 'index.css', 'utf8');
+if (!css.includes('fx-ripple')) css += `
 
 /* ---------- эффекты ---------- */
 .fx-ripple { position: absolute; border-radius: 9999px; background: #ffffff55; transform: scale(0); opacity: .8; animation: ripple .55s ease-out forwards; pointer-events: none; }
@@ -88,3 +45,19 @@ button { transition: transform .12s cubic-bezier(.2,1.4,.4,1), box-shadow .2s, b
 
 @keyframes tile-in { from { opacity: 0; transform: translateY(14px) scale(.97) } to { opacity: 1; transform: none } }
 .tile-in { animation: tile-in .38s cubic-bezier(.2,1.1,.4,1) both; }
+`;
+writeFileSync(P + 'index.css', css, 'utf8');
+
+// 2. Подключение оверлея и ряби
+let m = readFileSync(P + 'main.tsx', 'utf8');
+if (!m.includes('FxOverlay')) {
+  m = m.replace("import { Header, LiveStrip, BottomNav } from './ui/kit';",
+    `import { Header, LiveStrip, BottomNav } from './ui/kit';
+import { FxOverlay } from './ui/Fx';
+import { initRipples } from './lib/fx';`);
+  m = m.replace('      {tabs.includes(screen) && <BottomNav />}', `      {tabs.includes(screen) && <BottomNav />}
+      <FxOverlay />`);
+  m = m.replace('  useEffect(() => { login()', '  useEffect(() => { initRipples(); login()');
+}
+writeFileSync(P + 'main.tsx', m, 'utf8');
+console.log(m.includes('FxOverlay') && m.includes('initRipples()') ? 'wired' : 'MISS');

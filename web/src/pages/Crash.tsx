@@ -4,6 +4,7 @@ import { api, fmt, haptic } from '../lib/api';
 import { TopBar, BetInput, Avatar, Star, useCountdown } from '../ui/kit';
 import { Logo, Rocket, Burst } from '../ui/icons';
 import { Emo } from '../ui/emoji';
+import { win as fxWin, lose as fxLose } from '../lib/fx';
 
 const K = 0.00006;
 const mAt = (ms: number) => Math.floor(Math.exp(K * Math.max(0, ms)) * 100) / 100;
@@ -43,7 +44,7 @@ export default function Crash() {
   };
   const cashout = async () => {
     setBusy(true);
-    try { const r = await api('/api/crash/cashout', {}); haptic('success'); toast(`+${fmt(r.payout)}★ на ×${r.multiplier}`); }
+    try { const r = await api('/api/crash/cashout', {}); haptic('success'); fxWin(r.payout, r.multiplier, mine?.amount); }
     catch (e: any) { toast(e.message, 'err'); } finally { setBusy(false); }
   };
 
