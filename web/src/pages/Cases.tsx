@@ -46,7 +46,7 @@ export default function Cases() {
 
       <div className="grid grid-cols-3 gap-2 mt-2">
         {cases.map((x, i) => (
-          <button key={x.id} onClick={() => setSel(i)} className={`card py-3 px-2 text-center ${sel === i ? 'border-lime/50 bg-lime/5' : ''}`}>
+          <button key={x.id} onClick={() => setSel(i)} data-tilt="6" className={`card py-3 px-2 text-center ${sel === i ? 'border-lime/50 bg-lime/5' : ''}`}>
             <Emo n={i === 0 ? 'coin' : i === 1 ? 'bag' : 'glowstar'} size={34} className="mx-auto" />
             <div className="text-[11px] font-extrabold mt-1">{x.title}</div>
             <div className="text-[10px] text-lime">{fmt(x.price)}★</div>

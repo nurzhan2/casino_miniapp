@@ -158,3 +158,31 @@ export function trail(x: number, y: number, power = 1) {
   }
   run();
 }
+
+/** Наклон карточки за курсором + блик, который следует за указателем. Только для мыши. */
+export function initTilt() {
+  if (!matchMedia('(hover: hover)').matches) return;
+  const reset = (el: HTMLElement) => {
+    el.style.transform = '';
+    el.style.removeProperty('--mx');
+    el.style.removeProperty('--my');
+  };
+  addEventListener('pointermove', e => {
+    const el = (e.target as HTMLElement)?.closest('[data-tilt]') as HTMLElement | null;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+    const max = Number(el.dataset.tilt) || 8;
+    el.style.transform = `perspective(700px) rotateY(${(px - 0.5) * max * 2}deg) rotateX(${(0.5 - py) * max * 2}deg) translateZ(6px) scale(1.02)`;
+    el.style.setProperty('--mx', px * 100 + '%');
+    el.style.setProperty('--my', py * 100 + '%');
+  }, { passive: true });
+  addEventListener('pointerout', e => {
+    const el = (e.target as HTMLElement)?.closest?.('[data-tilt]') as HTMLElement | null;
+    if (el) reset(el);
+  }, { passive: true });
+  addEventListener('pointerdown', e => {
+    const el = (e.target as HTMLElement)?.closest?.('[data-tilt]') as HTMLElement | null;
+    if (el) el.style.transform += ' scale(.97)';
+  }, { passive: true });
+}

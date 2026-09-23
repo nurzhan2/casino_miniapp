@@ -25,11 +25,11 @@ function Tile({ g, tall, i = 0 }: { g: any; tall?: boolean; i?: number }) {
     : jp ? (jp.players.length ? `Банк ${fmt(jp.total)} · игроков ${jp.players.length}` : 'Ждём игроков') : null;
   return (
     <button onClick={() => go(g.k)}
-      className={`tile-in relative overflow-hidden text-left rounded-[22px] p-4 w-full active:scale-[.96] transition ${tall ? 'h-40' : 'h-[112px]'}`}
+      data-tilt="7" className={`tile-in relative overflow-hidden text-left rounded-[22px] p-4 w-full ${tall ? 'h-40' : 'h-[112px]'}`}
       style={{ background: `linear-gradient(145deg, ${g.a}, ${g.b})`, animationDelay: `${i * 45}ms` }}>
       <div className="absolute inset-0" style={{ background: 'radial-gradient(120% 90% at 100% 0%, #ffffff26, transparent 60%)' }} />
       <Emo n={g.e} size={tall ? 132 : 118}
-        className={`absolute drop-shadow-[0_10px_24px_rgba(0,0,0,.45)] ${tall ? '-right-6 -bottom-7' : '-right-5 -bottom-7'}`} />
+        className={`hover-pop absolute drop-shadow-[0_10px_24px_rgba(0,0,0,.45)] ${tall ? '-right-6 -bottom-7' : '-right-5 -bottom-7'}`} />
       {g.tag && <span className="absolute top-3.5 right-3.5 text-[10px] font-extrabold tracking-wider bg-black/35 backdrop-blur px-2 py-1 rounded-md z-10">{g.tag}</span>}
       <div className="relative font-display text-[19px] leading-none">{g.t}</div>
       <div className="relative text-[11px] text-white/75 mt-1.5 max-w-[58%] leading-snug">{g.d}</div>
@@ -46,7 +46,7 @@ export default function Home() {
   const { me, go } = useApp();
   return (
     <div className="px-4 space-y-6 mt-1">
-      <button onClick={() => go('bitkong')} className="w-full card p-4 flex items-center gap-3.5 text-left relative overflow-hidden">
+      <button onClick={() => go('bitkong')} data-tilt="5" className="w-full card p-4 flex items-center gap-3.5 text-left relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-lime/12 via-transparent to-transparent" />
         <Emo n="kong" size={52} className="relative shrink-0 bob drop-shadow-[0_6px_16px_rgba(0,0,0,.5)]" />
         <div className="relative flex-1 min-w-0">

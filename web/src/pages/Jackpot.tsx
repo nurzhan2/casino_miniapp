@@ -128,7 +128,7 @@ export default function Jackpot({ kind }: { kind: 'pvp' | 'arena' }) {
       <div className="card p-3 mt-3">
         <div className="text-xs text-white/50 font-bold mb-2">Игроки · {s.players.length}</div>
         {s.players.map((p: any) => (
-          <div key={p.id} className="row-in flex items-center gap-2 py-1.5">
+          <div key={p.id} className="row-in row-hover flex items-center gap-2 py-1.5">
             <span className="w-2 h-8 rounded-full" style={{ background: p.color }} />
             <Avatar src={p.photo} name={p.name} size={28} />
             <div className="flex-1 min-w-0"><div className="text-sm truncate">{p.name}</div><div className="text-[11px] text-white/40">Шанс {(p.chance * 100).toFixed(1)}%</div></div>

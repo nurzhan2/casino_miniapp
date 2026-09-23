@@ -51,7 +51,7 @@ export default function Leaders() {
         {!d && <div className="p-4 text-center text-white/40">Загрузка…</div>}
         {d?.list.length === 0 && <div className="p-4 text-center text-white/40">На этой неделе ещё никто не играл — стань первым!</div>}
         {d?.list.slice(3).map((r: any, i: number) => (
-          <div key={r.id} style={{ animationDelay: `${i * 35}ms` }} className={`row-in flex items-center gap-2 px-2 py-2 rounded-xl ${r.id === me.id ? 'bg-lime/10' : ''}`}>
+          <div key={r.id} style={{ animationDelay: `${i * 35}ms` }} className={`row-in row-hover flex items-center gap-2 px-2 py-2 rounded-xl ${r.id === me.id ? 'bg-lime/10' : ''}`}>
             <span className="w-8 text-center text-sm font-extrabold text-white/50">{r.place}</span>
             <Avatar src={r.photo} name={r.name} size={28} />
             <span className="flex-1 text-sm truncate">{r.name}</span>

@@ -72,7 +72,7 @@ export function BetInput({ value, onChange, disabled }: { value: number; onChang
       </div>
       <div className="grid grid-cols-4 gap-2 mt-2">
         {[10, 100, 500, 1000].map(v => (
-          <button key={v} className="btn-ghost h-9 text-sm" onClick={() => onChange(clamp(v))}>{v}★</button>
+          <button key={v} className="btn-ghost chip-hover h-9 text-sm" onClick={() => onChange(clamp(v))}>{v}★</button>
         ))}
       </div>
     </div>

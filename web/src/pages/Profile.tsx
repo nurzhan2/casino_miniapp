@@ -98,7 +98,7 @@ export default function Profile() {
         <div className="text-xs text-white/50 font-bold mb-2 px-1">Последние игры</div>
         {bets.length === 0 && <div className="text-sm text-white/30 p-2">Пока нет игр</div>}
         {bets.map(b => (
-          <div key={b.id} className="flex items-center gap-2 px-1 py-1.5 text-sm">
+          <div key={b.id} className="row-hover flex items-center gap-2 px-1 py-1.5 text-sm">
             <span className="flex-1">{GAME_NAMES[b.game] ?? b.game}</span>
             <span className="text-white/50">{fmt(b.amount)}★</span>
             <span className={`w-20 text-right font-extrabold ${b.payout > b.amount ? 'text-lime' : b.payout === b.amount ? 'text-white/60' : 'text-danger'}`}>
