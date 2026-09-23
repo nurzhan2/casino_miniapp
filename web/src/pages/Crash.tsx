@@ -5,6 +5,7 @@ import { TopBar, BetInput, Avatar, Star, useCountdown } from '../ui/kit';
 import { Logo, Rocket, Burst } from '../ui/icons';
 import { Emo } from '../ui/emoji';
 import { win as fxWin, lose as fxLose, trail } from '../lib/fx';
+import { ConfirmSlide } from '../ui/bits';
 
 const K = 0.00006;
 const mAt = (ms: number) => Math.floor(Math.exp(K * Math.max(0, ms)) * 100) / 100;
@@ -108,7 +109,7 @@ export default function Crash() {
         <div className="text-xs text-white/50 font-bold mb-2">Ставки раунда · {s.bets.length}</div>
         {s.bets.length === 0 && <div className="text-sm text-white/30 py-2">Пока пусто</div>}
         {s.bets.map((b: any, i: number) => (
-          <div key={i} className="flex items-center gap-2 py-1.5">
+          <div key={i} className={`row-hover flex items-center gap-2 py-1.5 ${b.cashed ? 'row-flash' : ''}`}>
             <Avatar src={b.photo} name={b.name} size={26} />
             <span className="text-sm truncate flex-1">{b.name}</span>
             <span className="text-sm font-bold"><Star /> {fmt(b.amount)}</span>

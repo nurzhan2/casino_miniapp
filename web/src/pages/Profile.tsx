@@ -4,6 +4,8 @@ import { api, fmt, haptic, tg, GAME_NAMES } from '../lib/api';
 import { Avatar, Star } from '../ui/kit';
 import { tonPay } from '../lib/ton';
 import { Settings, Shield } from '../ui/icons';
+import { Empty } from '../ui/bits';
+import { soundOn, toggleSound } from '../lib/sfx';
 
 export default function Profile() {
   const { me, refresh, toast, go } = useApp();
@@ -14,6 +16,7 @@ export default function Profile() {
   const [wd, setWd] = useState('');
   const [seed, setSeed] = useState('');
   const [revealed, setRevealed] = useState<any>(null);
+  const [snd, setSnd] = useState(soundOn());
 
   useEffect(() => { api('/api/bets').then(setBets); }, [me.balance]);
   useEffect(() => { api('/api/deposit/methods').then(setPays).catch(() => {}); }, []);
@@ -48,6 +51,7 @@ export default function Profile() {
           <div className="font-display">{me.name}</div>
           <div className="text-xs text-white/50">Оборот {fmt(me.wagered)}★ · ур. {me.level.index}</div>
         </div>
+        <button onClick={() => { setSnd(toggleSound()); }} className="btn-ghost chip-hover px-3 py-2 text-xs mr-2">{snd ? 'Звук вкл' : 'Звук выкл'}</button>
         {me.isAdmin && <button onClick={() => go('admin')} className="btn-ghost px-3 py-2 text-xs"><Settings size={14} className="inline-block align-[-2px] mr-1" />Админка</button>}
       </div>
 
@@ -96,7 +100,7 @@ export default function Profile() {
 
       <div className="card p-3">
         <div className="text-xs text-white/50 font-bold mb-2 px-1">Последние игры</div>
-        {bets.length === 0 && <div className="text-sm text-white/30 p-2">Пока нет игр</div>}
+        {bets.length === 0 && <Empty text="Пока нет игр — самое время начать" />}
         {bets.map(b => (
           <div key={b.id} className="row-hover flex items-center gap-2 px-1 py-1.5 text-sm">
             <span className="flex-1">{GAME_NAMES[b.game] ?? b.game}</span>

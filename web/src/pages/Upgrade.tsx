@@ -4,6 +4,7 @@ import { api, fmt, haptic } from '../lib/api';
 import { TopBar, BetInput } from '../ui/kit';
 import { Emo } from '../ui/emoji';
 import { win as fxWin, lose as fxLose } from '../lib/fx';
+import { sfx } from '../lib/sfx';
 
 export default function Upgrade() {
   const { me, refresh, toast } = useApp();
@@ -19,7 +20,7 @@ export default function Upgrade() {
 
   const go = async () => {
     if (busy.current) return;
-    busy.current = true; setSpin(true); setRes(null); haptic('medium');
+    busy.current = true; setSpin(true); setRes(null); haptic('medium'); sfx.spin();
     try {
       const r = await api('/api/upgrade', { amount, target });
       // стрелка останавливается на выпавшем числе: зелёный сектор = шанс

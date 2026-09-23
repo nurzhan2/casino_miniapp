@@ -4,6 +4,7 @@ import { api, fmt, haptic } from '../lib/api';
 import { TopBar } from '../ui/kit';
 import { Emo } from '../ui/emoji';
 import { win as fxWin, lose as fxLose } from '../lib/fx';
+import { sfx } from '../lib/sfx';
 
 const ICON = ['gem', 'coin', 'banana', 'bag', 'glowstar'];
 const ITEM_W = 92;
@@ -31,7 +32,7 @@ export default function Cases() {
       line[35] = r.index;
       setStrip(line);
       requestAnimationFrame(() => { setSpin(true); setOffset(35 * ITEM_W); });
-      haptic('medium');
+      haptic('medium'); sfx.spin();
       await new Promise(s => setTimeout(s, 4400));
       setRes(r);
       if (r.payout > c.price) { haptic('success'); fxWin(r.payout, r.multiplier, c.price); } else haptic('warning');

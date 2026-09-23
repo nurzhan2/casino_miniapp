@@ -161,3 +161,37 @@ button { transition: transform .12s cubic-bezier(.2,1.4,.4,1), box-shadow .2s, b
 input:focus { outline: none; border-color: #b6ff3b88 !important; box-shadow: 0 0 0 3px #b6ff3b22; transition: box-shadow .2s, border-color .2s; }
 input[type=range] { transition: filter .2s; }
 input[type=range]:hover { filter: brightness(1.2) drop-shadow(0 0 6px #b6ff3b66); }
+
+
+/* скелетоны и пустые состояния */
+.skeleton { background: linear-gradient(90deg, #17241b 25%, #22362a 50%, #17241b 75%); background-size: 200% 100%; animation: sk 1.3s linear infinite; }
+@keyframes sk { to { background-position: -200% 0 } }
+@keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+
+/* золотой режим на крупный выигрыш */
+.gold-mode body, .gold-mode { --color-lime: #ffd43b; }
+.gold-mode .bk-orb-1 { background: #ffd43b; opacity: .4; }
+.gold-mode .card { border-color: #ffd43b44; box-shadow: 0 0 40px -12px #ffd43b55; }
+html { transition: none; }
+.gold-mode .btn-lime { background: linear-gradient(180deg, #ffe27a, #f5a623); }
+
+/* повышение уровня кэшбэка */
+@keyframes level-up { 0% { transform: scale(.5) rotate(-8deg); opacity: 0 } 50% { transform: scale(1.15) rotate(2deg); opacity: 1 } 100% { transform: scale(1); opacity: 1 } }
+.level-up { animation: level-up .6s cubic-bezier(.2,1.4,.4,1) both; }
+
+/* волна по прогресс-бару */
+.wave-bar { position: relative; overflow: hidden; }
+.wave-bar::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, #ffffff66, transparent); transform: translateX(-100%); animation: wave 2.2s ease-in-out infinite; }
+@keyframes wave { 60%, 100% { transform: translateX(100%) } }
+
+/* зум при входе в игру */
+@keyframes zoom-in { from { opacity: 0; transform: scale(.82) translateY(24px) } to { opacity: 1; transform: none } }
+.screen-in { animation: zoom-in .34s cubic-bezier(.2,1,.32,1) both; }
+
+/* подсветка строки игрока, который забрал выигрыш */
+@keyframes row-flash { 0% { background: #b6ff3b44 } 100% { background: transparent } }
+.row-flash { animation: row-flash 1.1s ease-out; border-radius: 10px; }
+
+/* дрожь поля при близком промахе */
+@keyframes near { 0%,100% { transform: none } 25% { transform: translateX(-3px) } 75% { transform: translateX(3px) } }
+.near-miss { animation: near .22s linear 2; }

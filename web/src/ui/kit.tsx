@@ -27,7 +27,7 @@ export function Header() {
         <div className="text-sm font-extrabold truncate">{me.name}</div>
         <div className="text-[11px] text-lime/80 font-bold">Ур. {me.level.index} · кэшбэк {me.level.rate}%</div>
       </div>
-      <button onClick={() => go('profile')} className="ml-auto flex items-center gap-2 bg-moss border border-white/10 rounded-full pl-3 pr-1 py-1">
+      <button id="bk-balance" onClick={() => go('profile')} className="ml-auto flex items-center gap-2 bg-moss border border-white/10 rounded-full pl-3 pr-1 py-1">
         <Star /> <span className={`font-extrabold tabular-nums ${bump ? 'value-pop' : ''}`}>{fmt(shown)}</span>
         <span className="w-7 h-7 rounded-full bg-lime text-jungle grid place-items-center font-black text-lg leading-none">+</span>
       </button>

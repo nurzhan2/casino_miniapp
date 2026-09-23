@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useApp } from '../lib/store';
 import { api, fmt, haptic, tg } from '../lib/api';
 import { useCountUp } from '../lib/anim';
 import { Logo } from '../ui/icons';
 import { Emo } from '../ui/emoji';
+import { sfx } from '../lib/sfx';
+import { confetti } from '../lib/fx';
 
 export default function BitKong() {
   const { me, refresh, toast } = useApp();
@@ -11,6 +13,12 @@ export default function BitKong() {
   const lv = me.level, levels = me.levels as any[];
   const cur = levels[lv.index - 1];
   const cashShown = useCountUp(me.cashback, 700);
+  const [levelUp, setLevelUp] = useState(false);
+  const prevLevel = useRef(lv.index);
+  useEffect(() => {
+    if (lv.index > prevLevel.current) { setLevelUp(true); sfx.levelUp(); confetti(90); setTimeout(() => setLevelUp(false), 2600); }
+    prevLevel.current = lv.index;
+  }, [lv.index]);
   const progress = lv.next ? Math.min(1, (me.wagered - cur.wagered) / (lv.next.wagered - cur.wagered)) : 1;
 
   const claim = async () => {
@@ -26,6 +34,12 @@ export default function BitKong() {
 
   return (
     <div className="px-4 space-y-3 mt-1">
+      {levelUp && (
+        <div className="fixed inset-0 z-[57] grid place-items-center pointer-events-none">
+          <div className="level-up text-center"><div className="font-display text-4xl text-lime glow">Уровень {lv.index}</div>
+          <div className="text-sm text-white/60 mt-1">кэшбэк {lv.rate}%</div></div>
+        </div>
+      )}
       <div className="card p-5 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,#b6ff3b33,transparent_65%)]" />
         <div className="float relative flex justify-center"><Emo n="kong" size={112} data-idle="1" className="drop-shadow-[0_12px_28px_rgba(0,0,0,.55)]" /></div>
@@ -41,7 +55,7 @@ export default function BitKong() {
           <div className="font-display">{lv.rate}% <span className="text-lime">/ Уровень {lv.index}</span></div>
           {lv.next && <div className="text-xs text-white/50">ещё {fmt(lv.next.wagered - me.wagered)}★ до {lv.next.rate}%</div>}
         </div>
-        <div className="h-2.5 bg-moss rounded-full mt-3 overflow-hidden">
+        <div className="h-2.5 bg-moss rounded-full mt-3 overflow-hidden wave-bar">
           <div className="h-full bg-lime rounded-full transition-all" style={{ width: `${progress * 100}%` }} />
         </div>
         <div className="grid mt-3 text-center text-[11px]" style={{ gridTemplateColumns: `repeat(${levels.length}, 1fr)` }}>

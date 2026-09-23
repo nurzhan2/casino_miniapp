@@ -4,6 +4,7 @@ import { api, fmt, haptic } from '../lib/api';
 import { TopBar, BetInput } from '../ui/kit';
 import { Emo } from '../ui/emoji';
 import { win as fxWin, lose as fxLose } from '../lib/fx';
+import { sfx } from '../lib/sfx';
 
 const COLORS = ['#b6ff3b', '#ffb13b', '#3bc9ff', '#ff3bd4', '#8b5cff', '#ff5a5a', '#2c3c31'];
 
@@ -21,7 +22,7 @@ export default function Roulette() {
 
   const go = async () => {
     if (busy.current) return;
-    busy.current = true; setSpin(true); setRes(null); haptic('medium');
+    busy.current = true; setSpin(true); setRes(null); haptic('medium'); sfx.spin();
     try {
       const r = await api('/api/roulette', { amount });
       // сектор победителя ставим под стрелку: секторы пропорциональны вероятностям

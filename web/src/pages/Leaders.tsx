@@ -4,6 +4,7 @@ import { api, fmt } from '../lib/api';
 import { Avatar, Star, useCountdown } from '../ui/kit';
 import { Trophy } from '../ui/icons';
 import { Emo } from '../ui/emoji';
+import { SkeletonList, Empty } from '../ui/bits';
 
 const MEDAL_STYLE = ['from-[#ffd76a] to-[#e0a000] text-[#3a2800]', 'from-[#dfe7ee] to-[#9fb0bf] text-[#1d2630]', 'from-[#e7a86a] to-[#b06a2c] text-[#2e1806]'];
 
@@ -48,8 +49,8 @@ export default function Leaders() {
       </div>}
 
       <div className="card mt-3 p-2">
-        {!d && <div className="p-4 text-center text-white/40">Загрузка…</div>}
-        {d?.list.length === 0 && <div className="p-4 text-center text-white/40">На этой неделе ещё никто не играл — стань первым!</div>}
+        {!d && <SkeletonList n={6} />}
+        {d?.list.length === 0 && <Empty text="На этой неделе ещё никто не играл — стань первым" emo="trophy" />}
         {d?.list.slice(3).map((r: any, i: number) => (
           <div key={r.id} style={{ animationDelay: `${i * 35}ms` }} className={`row-in row-hover flex items-center gap-2 px-2 py-2 rounded-xl ${r.id === me.id ? 'bg-lime/10' : ''}`}>
             <span className="w-8 text-center text-sm font-extrabold text-white/50">{r.place}</span>

@@ -20,6 +20,7 @@ import Roulette from './pages/Roulette';
 import Cases from './pages/Cases';
 import Upgrade from './pages/Upgrade';
 import { Logo } from './ui/icons';
+import { assembleLogo } from './lib/fx';
 
 function Screens() {
   const { screen } = useApp();
@@ -46,8 +47,13 @@ function Root() {
   const [err, setErr] = useState('');
   useEffect(() => { initRipples(); initTilt(); login().then(m => { setMe(m); connectWs(); }).catch(e => setErr(e.message)); }, []);
   if (err) return <div className="h-full grid place-items-center p-8 text-center"><div><div className="flex justify-center mb-4"><Logo size={64} /></div>{err}</div></div>;
-  if (!me) return <div className="h-full grid place-items-center"><div className="float"><Logo size={72} /></div></div>;
+  if (!me) return <Loader />;
   return <AppProvider initialMe={me}><Screens /></AppProvider>;
+}
+
+function Loader() {
+  useEffect(() => { assembleLogo(innerWidth / 2, innerHeight / 2); const i = setInterval(() => assembleLogo(innerWidth / 2, innerHeight / 2), 1200); return () => clearInterval(i); }, []);
+  return <div className="h-full grid place-items-center"><div className="breathe"><Logo size={84} /></div></div>;
 }
 
 createRoot(document.getElementById('root')!).render(<Root />);

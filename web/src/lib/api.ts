@@ -32,7 +32,10 @@ export async function login() {
 }
 export const getToken = () => token;
 
+import { sfx } from './sfx';
+
 export function haptic(t: 'light' | 'medium' | 'heavy' | 'success' | 'error' | 'warning') {
+  if (t === 'light') sfx.tap(); else if (t === 'medium') sfx.bet(); else if (t === 'success') sfx.cash();
   const h = tg?.HapticFeedback;
   if (!h) return;
   if (t === 'success' || t === 'error' || t === 'warning') h.notificationOccurred(t);

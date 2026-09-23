@@ -5,6 +5,7 @@ import { TopBar, BetInput, Avatar, Star, useCountdown } from '../ui/kit';
 import { Logo } from '../ui/icons';
 import { Emo } from '../ui/emoji';
 import { win as fxWin, lose as fxLose } from '../lib/fx';
+import { Num, ConfirmSlide } from '../ui/bits';
 
 /** Колесо PvP: сегменты по долям, указатель сверху */
 function Wheel({ s, spinning }: { s: any; spinning: boolean }) {
@@ -110,7 +111,7 @@ export default function Jackpot({ kind }: { kind: 'pvp' | 'arena' }) {
           </div>
         </div>}
         <div className="flex justify-center mt-3">
-          <div className="bg-moss rounded-full px-4 py-1.5 font-extrabold">Банк <Star /> {fmt(s.total)}</div>
+          <div className="bg-moss rounded-full px-4 py-1.5 font-extrabold">Банк <Star /> <Num v={s.total} /></div>
         </div>
         {kind === 'arena' && <div className="text-center text-sm font-bold mt-2 text-white/70">
           {s.phase === 'countdown' ? `Старт через ${Math.ceil(left)}с` : spinning ? (showResult && winner ? `Победил ${winner.name}` : 'Шар в игре…') : 'Ждём второго игрока'}</div>}
@@ -120,9 +121,11 @@ export default function Jackpot({ kind }: { kind: 'pvp' | 'arena' }) {
 
       <div className="card p-4 mt-3 space-y-3">
         <BetInput value={amount} onChange={setAmount} disabled={spinning} />
-        <button disabled={busy || spinning} onClick={join} className="btn-lime w-full h-14 text-lg">
-          {spinning ? 'Розыгрыш…' : my ? `Добавить ${fmt(amount)}★ (шанс ${Math.round(my.chance * 100)}%)` : `Сделать ставку ${fmt(amount)}★`}
-        </button>
+        {amount >= 5000 && !spinning
+          ? <ConfirmSlide label={`Протяните, чтобы поставить ${fmt(amount)}★`} onConfirm={join} />
+          : <button disabled={busy || spinning} onClick={join} className="btn-lime w-full h-14 text-lg">
+              {spinning ? 'Розыгрыш…' : my ? `Добавить ${fmt(amount)}★ (шанс ${Math.round(my.chance * 100)}%)` : `Сделать ставку ${fmt(amount)}★`}
+            </button>}
       </div>
 
       <div className="card p-3 mt-3">

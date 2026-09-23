@@ -5,6 +5,8 @@ import { TopBar, BetInput } from '../ui/kit';
 import { Bomb, Gem } from '../ui/icons';
 import { Emo } from '../ui/emoji';
 import { win as fxWin, lose as fxLose } from '../lib/fx';
+import { sfx } from '../lib/sfx';
+import { Num } from '../ui/bits';
 
 export default function Mines() {
   const { refresh, toast } = useApp();
@@ -34,11 +36,12 @@ export default function Mines() {
     // «на грани»: клетка трясётся дольше, когда риск выше
     const risk = g.mines / (n - g.revealed.length);
     try {
+      if (risk > 0.35) { const el = document.getElementById('mines-grid'); el?.classList.add('near-miss'); setTimeout(() => el?.classList.remove('near-miss'), 500); }
       const [r] = await Promise.all([api('/api/mines/reveal', { cell }), sleep(350 + risk * 900)]);
       setG(r);
       if (r.status === 'lost') { haptic('error'); fxLose('Взрыв!'); }
       else if (r.status === 'won') { haptic('success'); fxWin(r.payout, r.multiplier, r.amount); refresh(); }
-      else haptic('light');
+      else { haptic('light'); sfx.reveal(); }
     } catch (e: any) { toast(e.message, 'err'); } finally { setPending(null); }
   };
 
@@ -52,9 +55,9 @@ export default function Mines() {
   const cols = g?.size ?? size;
   return (
     <div className="px-4">
-      <TopBar title="Мины" right={g && <span className="text-sm font-extrabold text-lime">×{g.multiplier}</span>} />
+      <TopBar title="Мины" right={g && <span className="text-sm font-extrabold text-lime">×<Num v={g.multiplier} fixed={2} /></span>} />
       <div className={`card p-3 mt-2 ${g?.status === 'lost' ? 'flash-red' : ''}`}>
-        <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
+        <div id="mines-grid" className="grid gap-2" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
           {cells.map(c => {
             const safe = g?.revealed?.includes(c);
             const bomb = g?.minePos?.includes(c);
