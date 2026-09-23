@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useApp } from '../lib/store';
 import { fmt, tg, GAME_NAMES } from '../lib/api';
+import { StarIcon, Games, Trophy, Logo, User } from './icons';
 
-export const Star = ({ className = '' }: { className?: string }) => <span className={`text-banana ${className}`}>★</span>;
+export const Star = ({ size = 15 }: { size?: number }) => <StarIcon size={size} className="inline-block align-[-2px]" />;
 
 export function Avatar({ src, name, size = 32 }: { src?: string | null; name?: string; size?: number }) {
   const s = { width: size, height: size };
@@ -103,14 +104,14 @@ export function useCountdown(until?: number) {
 
 export function BottomNav() {
   const { screen, go } = useApp();
-  const items = [['home', '🎮', 'Игры'], ['leaders', '🏆', 'Лидеры'], ['bitkong', '🦍', 'BitKong'], ['profile', '👤', 'Профиль']];
+  const items: [string, any, string][] = [['home', Games, 'Игры'], ['leaders', Trophy, 'Лидеры'], ['bitkong', Logo, 'BitKong'], ['profile', User, 'Профиль']];
   return (
     <div className="fixed bottom-0 inset-x-0 z-40 px-3 pb-[max(10px,env(safe-area-inset-bottom))] pt-2 bg-gradient-to-t from-jungle via-jungle/95 to-transparent">
       <div className="card grid grid-cols-4 p-1.5 max-w-md mx-auto">
-        {items.map(([k, ic, label]) => (
-          <button key={k} onClick={() => go(k)} className={`flex flex-col items-center gap-0.5 py-1.5 rounded-2xl transition ${screen === k ? 'bg-lime/15 text-lime' : 'text-white/50'}`}>
-            <span className="text-xl leading-none">{ic}</span>
-            <span className="text-[10px] font-extrabold">{label}</span>
+        {items.map(([k, Icon, label]) => (
+          <button key={k} onClick={() => go(k)} className={`flex flex-col items-center gap-1 py-2 rounded-2xl transition ${screen === k ? 'bg-lime/12 text-lime' : 'text-white/45'}`}>
+            <Icon size={k === 'bitkong' ? 21 : 20} />
+            <span className="text-[10px] font-bold tracking-wide">{label}</span>
           </button>
         ))}
       </div>

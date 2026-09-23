@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useApp } from '../lib/store';
 import { api, fmt, haptic } from '../lib/api';
 import { TopBar, BetInput, Avatar, Star, useCountdown } from '../ui/kit';
+import { Logo } from '../ui/icons';
 
 /** Колесо PvP: сегменты по долям, указатель сверху */
 function Wheel({ s, spinning }: { s: any; spinning: boolean }) {
@@ -23,7 +24,7 @@ function Wheel({ s, spinning }: { s: any; spinning: boolean }) {
   });
   return (
     <div className="relative w-64 h-64 mx-auto">
-      <div className="absolute left-1/2 -top-1 -translate-x-1/2 z-10 text-2xl drop-shadow">▼</div>
+      <div className="absolute left-1/2 -top-1.5 -translate-x-1/2 z-10 w-0 h-0 border-x-[9px] border-x-transparent border-t-[16px] border-t-lime drop-shadow-[0_2px_6px_#b6ff3b80]" />
       <svg viewBox="0 0 220 220" className="w-full h-full" style={{ transform: `rotate(${rot}deg)`, transition: spinning ? `transform ${s.spinMs}ms cubic-bezier(.12,.75,.08,1)` : 'none' }}>
         <circle cx="110" cy="110" r="100" fill="#1a2a1f" /><circle cx="110" cy="110" r="62" fill="#0a130d" />
         {segs.map((g: any, i: number) => <path key={i} d={g.d} fill={g.color} stroke="#0a130d" strokeWidth="2" />)}
@@ -90,14 +91,14 @@ export default function Jackpot({ kind }: { kind: 'pvp' | 'arena' }) {
   const winner = s.players.find((p: any) => p.id === s.winner);
   return (
     <div className="px-4">
-      <TopBar title={kind === 'pvp' ? '🎡 PvP' : '💪 Арена'} right={<span className="text-xs text-white/40">Игра #{s.id}</span>} />
+      <TopBar title={kind === 'pvp' ? 'PvP' : 'Арена'} right={<span className="text-xs text-white/40">Игра #{s.id}</span>} />
       <div className="card p-4 mt-2 relative">
         {kind === 'pvp' ? <Wheel s={s} spinning={spinning} /> : <Arena s={s} spinning={spinning} />}
         {kind === 'pvp' && <div className="absolute inset-0 grid place-items-center pointer-events-none">
           <div className="text-center w-28">
             {showResult && winner ? <div className="pop"><Avatar src={winner.photo} name={winner.name} size={40} /><div className="text-xs font-extrabold mt-1 truncate">{winner.name}</div></div>
               : s.phase === 'countdown' ? <div className="font-display text-3xl">{Math.ceil(left)}</div>
-              : spinning ? <div className="text-3xl">🦍</div>
+              : spinning ? <Logo size={44} className="mx-auto" />
               : <div className="text-xs text-white/60 font-bold">Ждём второго игрока</div>}
           </div>
         </div>}

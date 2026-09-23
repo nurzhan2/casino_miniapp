@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { useApp } from '../lib/store';
 import { api, fmt } from '../lib/api';
 import { Avatar, Star, useCountdown } from '../ui/kit';
+import { Trophy } from '../ui/icons';
 
-const MEDAL = ['🥇', '🥈', '🥉'];
+const MEDAL_STYLE = ['from-[#ffd76a] to-[#e0a000] text-[#3a2800]', 'from-[#dfe7ee] to-[#9fb0bf] text-[#1d2630]', 'from-[#e7a86a] to-[#b06a2c] text-[#2e1806]'];
 
 export default function Leaders() {
   const { me } = useApp();
@@ -17,7 +18,7 @@ export default function Leaders() {
   return (
     <div className="px-4">
       <div className="flex items-center justify-between mt-1">
-        <div className="font-display text-xl">🏆 Лидеры</div>
+        <div className="font-display text-xl flex items-center gap-2"><Trophy size={20} className="text-banana" />Лидеры</div>
         <div className="flex bg-moss rounded-xl p-1 text-xs font-extrabold">
           {(['current', 'previous'] as const).map(p => (
             <button key={p} onClick={() => setPeriod(p)} className={`px-3 py-1.5 rounded-lg ${period === p ? 'bg-lime text-jungle' : 'text-white/60'}`}>
@@ -30,7 +31,7 @@ export default function Leaders() {
       <div className="grid grid-cols-3 gap-2 items-end mt-4">
         {podium.map(({ r, prize, place }) => (
           <div key={place} className={`card text-center p-3 ${place === 1 ? 'pb-6 border-banana/40 bg-gradient-to-b from-banana/15 to-transparent' : ''}`}>
-            <div className="text-3xl">{MEDAL[place - 1]}</div>
+            <div className={`mx-auto w-8 h-8 rounded-full grid place-items-center font-display text-sm bg-gradient-to-br ${MEDAL_STYLE[place - 1]}`}>{place}</div>
             <div className="flex justify-center my-2"><Avatar src={r?.photo} name={r?.name ?? '?'} size={place === 1 ? 52 : 40} /></div>
             <div className="text-xs font-extrabold truncate">{r?.name ?? '—'}</div>
             <div className="text-[10px] text-white/50">{r ? `${fmt(r.wagered)}★` : 'свободно'}</div>

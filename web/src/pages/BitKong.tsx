@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '../lib/store';
 import { api, fmt, haptic, tg } from '../lib/api';
+import { Logo } from '../ui/icons';
 
 export default function BitKong() {
   const { me, refresh, toast } = useApp();
@@ -15,7 +16,7 @@ export default function BitKong() {
     catch (e: any) { toast(e.message, 'err'); } finally { setBusy(false); }
   };
   const share = () => {
-    const text = 'Играю в BitKong 🦍 — кэшбэк с каждой ставки и призы топ-3 недели';
+    const text = 'Играю в BitKong — кэшбэк с каждой ставки и призы топ-3 недели';
     if (tg?.openTelegramLink && me.refLink.startsWith('http')) tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(me.refLink)}&text=${encodeURIComponent(text)}`);
     else { navigator.clipboard?.writeText(me.refLink); toast('Ссылка скопирована'); }
   };
@@ -24,7 +25,7 @@ export default function BitKong() {
     <div className="px-4 space-y-3 mt-1">
       <div className="card p-5 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,#b6ff3b33,transparent_65%)]" />
-        <div className="text-7xl float relative">🦍</div>
+        <div className="float relative flex justify-center"><Logo size={96} /></div>
         <div className="font-display text-2xl mt-2 relative">BitKong кэшбэк</div>
         <div className="text-sm text-white/60 relative">Процент с каждой ставки — неважно, выиграл или проиграл</div>
         <div className="font-display text-5xl text-lime glow mt-4 relative tabular-nums">{me.cashback.toFixed(2)}<span className="text-banana">★</span></div>
@@ -51,7 +52,7 @@ export default function BitKong() {
       </div>
 
       <div className="card p-4 bg-gradient-to-br from-berry/25 to-transparent">
-        <div className="font-display">Приглашай друзей 🍌</div>
+        <div className="font-display">Приглашай друзей</div>
         <div className="text-sm text-white/60 mt-1">{me.refRate}% с каждой ставки друга — на твой кэшбэк. Приглашено: <b className="text-white">{me.referrals}</b></div>
         <div className="flex gap-2 mt-3">
           <div className="flex-1 bg-moss rounded-xl px-3 py-2.5 text-xs truncate border border-white/10">{me.refLink}</div>

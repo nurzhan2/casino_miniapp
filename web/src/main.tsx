@@ -13,6 +13,7 @@ import Leaders from './pages/Leaders';
 import BitKong from './pages/BitKong';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
+import { Logo } from './ui/icons';
 
 function Screens() {
   const { screen } = useApp();
@@ -35,8 +36,8 @@ function Root() {
   const [me, setMe] = useState<any>(null);
   const [err, setErr] = useState('');
   useEffect(() => { login().then(m => { setMe(m); connectWs(); }).catch(e => setErr(e.message)); }, []);
-  if (err) return <div className="h-full grid place-items-center p-8 text-center"><div><div className="text-5xl mb-3">🦍</div>{err}</div></div>;
-  if (!me) return <div className="h-full grid place-items-center"><div className="text-6xl float">🦍</div></div>;
+  if (err) return <div className="h-full grid place-items-center p-8 text-center"><div><div className="flex justify-center mb-4"><Logo size={64} /></div>{err}</div></div>;
+  if (!me) return <div className="h-full grid place-items-center"><div className="float"><Logo size={72} /></div></div>;
   return <AppProvider initialMe={me}><Screens /></AppProvider>;
 }
 

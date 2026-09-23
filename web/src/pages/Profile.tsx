@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useApp } from '../lib/store';
 import { api, fmt, haptic, tg, GAME_NAMES } from '../lib/api';
 import { Avatar, Star } from '../ui/kit';
+import { Settings, Shield } from '../ui/icons';
 
 export default function Profile() {
   const { me, refresh, toast, go } = useApp();
@@ -38,7 +39,7 @@ export default function Profile() {
           <div className="font-display">{me.name}</div>
           <div className="text-xs text-white/50">Оборот {fmt(me.wagered)}★ · ур. {me.level.index}</div>
         </div>
-        {me.isAdmin && <button onClick={() => go('admin')} className="btn-ghost px-3 py-2 text-xs">⚙️ Админка</button>}
+        {me.isAdmin && <button onClick={() => go('admin')} className="btn-ghost px-3 py-2 text-xs"><Settings size={14} className="inline-block align-[-2px] mr-1" />Админка</button>}
       </div>
 
       <div className="card p-4">
@@ -50,7 +51,7 @@ export default function Profile() {
           ))}
         </div>
         <button onClick={deposit} className="btn-lime w-full h-12 mt-2">Пополнить {fmt(dep)}★ через Telegram Stars</button>
-        {!tg?.initData && <button onClick={faucet} className="btn-ghost w-full h-10 mt-2 text-sm">🧪 Тестовые 5000★ (dev)</button>}
+        {!tg?.initData && <button onClick={faucet} className="btn-ghost w-full h-10 mt-2 text-sm">Тестовые 5000★ (dev)</button>}
         <div className="flex gap-2 mt-3">
           <input value={wd} onChange={e => setWd(e.target.value.replace(/\D/g, ''))} placeholder="Сумма вывода (от 100)"
             className="flex-1 bg-moss rounded-xl px-3 h-11 outline-none border border-white/10 text-sm" />
@@ -72,7 +73,7 @@ export default function Profile() {
       </div>
 
       <div className="card p-4 text-xs space-y-2">
-        <div className="font-display text-sm">🔐 Честная игра</div>
+        <div className="font-display text-sm"><Shield size={15} className="inline-block align-[-3px] mr-1.5 text-lime" />Честная игра</div>
         <div className="text-white/50">Результат = HMAC-SHA256(server seed, client seed:nonce). Хэш server seed известен заранее — после смены сида его можно проверить.</div>
         <div className="break-all"><span className="text-white/40">Хэш server seed:</span> {me.fair.serverSeedHash}</div>
         <div><span className="text-white/40">Client seed:</span> {me.fair.clientSeed} · <span className="text-white/40">nonce:</span> {me.fair.nonce}</div>

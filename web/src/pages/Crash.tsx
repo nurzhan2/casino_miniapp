@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useApp } from '../lib/store';
 import { api, fmt, haptic } from '../lib/api';
 import { TopBar, BetInput, Avatar, Star, useCountdown } from '../ui/kit';
+import { Logo, Rocket, Burst } from '../ui/icons';
 
 const K = 0.00006;
 const mAt = (ms: number) => Math.floor(Math.exp(K * Math.max(0, ms)) * 100) / 100;
@@ -53,7 +54,7 @@ export default function Crash() {
 
   return (
     <div className="px-4">
-      <TopBar title="🚀 Ракета" />
+      <TopBar title="Ракета" />
       <div className="flex gap-1.5 overflow-x-auto no-scrollbar py-2">
         {s.history.map((h: number, i: number) => (
           <span key={i} className={`shrink-0 text-xs font-extrabold px-2.5 py-1 rounded-full ${h >= 2 ? 'bg-lime/15 text-lime' : 'bg-white/5 text-white/50'}`}>×{h}</span>
@@ -66,11 +67,11 @@ export default function Crash() {
           <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#b6ff3b" stopOpacity=".35" /><stop offset="1" stopColor="#b6ff3b" stopOpacity="0" /></linearGradient></defs>
           {path && <><path d={`${path} L${tip[0]},${H} L0,${H} Z`} fill="url(#g)" /><path d={path} stroke="#b6ff3b" strokeWidth="3" fill="none" /></>}
         </svg>
-        {s.phase === 'running' && <div className="absolute text-4xl" style={{ left: `${(tip[0] / W) * 100}%`, top: `${15 + (tip[1] / H) * 85 * 0.85}%`, transform: 'translate(-30%,-70%) rotate(-30deg)' }}>🚀</div>}
+        {s.phase === 'running' && <div className="absolute text-4xl" style={{ left: `${(tip[0] / W) * 100}%`, top: `${15 + (tip[1] / H) * 85 * 0.85}%`, transform: 'translate(-30%,-70%) rotate(-30deg)' }}><Rocket size={36} className="text-lime drop-shadow-[0_0_12px_#b6ff3b]" /></div>}
         <div className="absolute inset-0 grid place-items-center pointer-events-none">
-          {s.phase === 'betting' && <div className="text-center"><div className="text-5xl float">🦍🚀</div><div className="font-display text-lg mt-2">Старт через {left.toFixed(1)}с</div></div>}
+          {s.phase === 'betting' && <div className="text-center"><div className="float flex justify-center"><Logo size={58} /></div><div className="font-display text-lg mt-2">Старт через {left.toFixed(1)}с</div></div>}
           {s.phase === 'running' && <div className={`font-display text-6xl tabular-nums ${m >= 2 ? 'text-lime glow' : ''}`}>×{m.toFixed(2)}</div>}
-          {s.phase === 'crashed' && <div className="text-center pop"><div className="text-6xl">💥</div><div className="font-display text-4xl text-danger">×{s.crash}</div></div>}
+          {s.phase === 'crashed' && <div className="text-center pop"><div className="w-16 h-16 mx-auto"><Burst /></div><div className="font-display text-4xl text-danger">×{s.crash}</div></div>}
         </div>
       </div>
 

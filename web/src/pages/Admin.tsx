@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useApp } from '../lib/store';
 import { api, fmt, GAME_NAMES } from '../lib/api';
 import { TopBar } from '../ui/kit';
+import { Close } from '../ui/icons';
 
 const Num = ({ label, value, onChange, step = 1 }: any) => (
   <label className="flex items-center justify-between gap-2 text-sm py-1">
@@ -33,11 +34,11 @@ export default function Admin() {
   const set = (k: string, v: any) => setCfg((c: any) => ({ ...c, [k]: v }));
   const setRow = (k: string, i: number, f: string, v: any) => set(k, cfg[k].map((r: any, j: number) => j === i ? { ...r, [f]: v } : r));
 
-  if (!st || !cfg) return <TopBar title="Админка" />;
+      <TopBar title="Админка" />
   const margin = st.total.wagered - st.total.paid;
   return (
     <div className="px-4 space-y-3">
-      <TopBar title="⚙️ Админка" />
+      <TopBar title="Админка" />
       <div className="grid grid-cols-3 gap-2 text-center">
         {[['Игроков', st.users], ['Онлайн', st.online], ['Пополнения', fmt(st.deposits) + '★'],
           ['Оборот 24ч', fmt(st.day.wagered) + '★'], ['Выплаты 24ч', fmt(st.day.paid) + '★'], ['Доход всего', fmt(margin) + '★']].map(([l, v]) => (
@@ -65,7 +66,7 @@ export default function Admin() {
           <div key={i} className="grid grid-cols-[1fr_1fr_32px] gap-2 mt-1.5">
             <input type="number" className={cell} value={l.wagered} onChange={e => setRow('cashback_levels', i, 'wagered', Number(e.target.value))} />
             <input type="number" step={0.1} className={cell} value={l.rate} onChange={e => setRow('cashback_levels', i, 'rate', Number(e.target.value))} />
-            <button className="btn-ghost" onClick={() => set('cashback_levels', cfg.cashback_levels.filter((_: any, j: number) => j !== i))}>✕</button>
+            <button className="btn-ghost" onClick={() => set('cashback_levels', cfg.cashback_levels.filter((_: any, j: number) => j !== i))}><Close size={14} /></button>
           </div>
         ))}
         <button className="btn-ghost w-full h-8 mt-2 text-xs" onClick={() => set('cashback_levels', [...cfg.cashback_levels, { wagered: 0, rate: 1 }])}>+ уровень</button>
@@ -77,14 +78,14 @@ export default function Admin() {
             <input type="number" className={cell} value={p.place} onChange={e => setRow('leader_prizes', i, 'place', Number(e.target.value))} />
             <input type="number" className={cell} value={p.stars} onChange={e => setRow('leader_prizes', i, 'stars', Number(e.target.value))} />
             <input className={cell} value={p.gift} placeholder="NFT-подарок" onChange={e => setRow('leader_prizes', i, 'gift', e.target.value)} />
-            <button className="btn-ghost" onClick={() => set('leader_prizes', cfg.leader_prizes.filter((_: any, j: number) => j !== i))}>✕</button>
+            <button className="btn-ghost" onClick={() => set('leader_prizes', cfg.leader_prizes.filter((_: any, j: number) => j !== i))}><Close size={14} /></button>
           </div>
         ))}
         <button className="btn-ghost w-full h-8 mt-2 text-xs" onClick={() => set('leader_prizes', [...cfg.leader_prizes, { place: cfg.leader_prizes.length + 1, stars: 100, gift: '' }])}>+ место</button>
         <button className="btn-lime w-full h-11 mt-4" onClick={save}>Сохранить настройки</button>
         <div className="grid grid-cols-2 gap-2 mt-2">
-          <button className="btn-ghost h-10 text-xs" onClick={() => confirm('Выдать призы за прошлую неделю?') && run(() => api('/api/admin/leaders/award', {}), 'Призы выданы')}>🏆 Призы за прошлую неделю</button>
-          <button className="btn-ghost h-10 text-xs" onClick={() => confirm('Выдать призы по текущему топу?') && run(() => api('/api/admin/leaders/award', { current: true }), 'Призы выданы')}>🏆 Призы по текущему топу</button>
+          <button className="btn-ghost h-10 text-xs" onClick={() => confirm('Выдать призы за прошлую неделю?') && run(() => api('/api/admin/leaders/award', {}), 'Призы выданы')}>Призы за прошлую неделю</button>
+          <button className="btn-ghost h-10 text-xs" onClick={() => confirm('Выдать призы по текущему топу?') && run(() => api('/api/admin/leaders/award', { current: true }), 'Призы выданы')}>Призы по текущему топу</button>
         </div>
       </div>
 
