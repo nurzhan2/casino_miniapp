@@ -2,6 +2,7 @@ import { db, now, getSetting, tx } from './db.ts';
 import { newSeed, sha256 } from './fair.ts';
 import { toUser, broadcast } from './hub.ts';
 import { randomBytes } from 'node:crypto';
+import { REF_MIN_WAGERED } from './guard.ts';
 
 export class HttpError extends Error {
   status: number;
@@ -66,7 +67,7 @@ export function placeBet(userId: number, game: string, amount: number, meta?: un
   const cb = Math.floor(amount * rate * 10); // amount * rate% * 1000 милли
   db.prepare('UPDATE users SET wagered=wagered+?, cashback=cashback+?, cashback_total=cashback_total+? WHERE id=?')
     .run(amount, cb, cb, userId);
-  if (u.ref_by) {
+  if (u.ref_by && u.wagered + amount >= REF_MIN_WAGERED) {   // защита от накрутки рефералами
     const rr = Math.floor(amount * getSetting('ref_rate') * 10);
     db.prepare('UPDATE users SET cashback=cashback+?, cashback_total=cashback_total+? WHERE id=?').run(rr, rr, u.ref_by);
   }

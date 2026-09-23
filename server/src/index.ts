@@ -19,6 +19,8 @@ import type { Kind } from './games/jackpot.ts';
 import { leaders, awardLeaders } from './leaders.ts';
 import { createInvoice, handleUpdate, startBot } from './bot.ts';
 import { createDeposit, methods, cryptoBotVerify, cryptoBotWebhook, sbpWebhook, startPayments } from './payments.ts';
+import { plinko, plinkoTable, roulette, rouletteTable, caseList, openCase, upgrade } from './games/extras.ts';
+import { rateLimit } from './guard.ts';
 
 const app = Fastify({ logger: { level: 'warn' } });
 // сырое тело нужно для проверки подписи вебхука CryptoBot
@@ -42,13 +44,16 @@ app.setErrorHandler((err: any, _req, reply) => {
 
 // Авторизация: всё под /api, кроме /api/auth и /api/public
 app.addHook('preHandler', async (req: any) => {
-  if (!req.url.startsWith('/api/') || req.url.startsWith('/api/auth') || req.url.startsWith('/api/public')) return;
+  if (!req.url.startsWith('/api/') || req.url.startsWith('/api/public')) return;
+  if (req.url.startsWith('/api/auth')) { rateLimit('auth:' + req.ip, 20, 60_000); return; }
   const id = readToken(String(req.headers.authorization ?? '').replace(/^Bearer /, ''));
   if (!id) throw new HttpError(401, 'Нужна авторизация');
   const u = db.prepare('SELECT banned FROM users WHERE id=?').get(id) as any;
   if (!u) throw new HttpError(401, 'Нужна авторизация');
   if (u.banned) throw new HttpError(403, 'Доступ закрыт');
   req.userId = id;
+  if (req.method === 'POST') rateLimit('u:' + id, 25, 5_000);          // не больше 25 действий за 5 секунд
+  if (req.url.startsWith('/api/deposit') || req.url.startsWith('/api/withdraw')) rateLimit('pay:' + id, 10, 60_000);
   if (req.url.startsWith('/api/admin') && !isAdmin(id)) throw new HttpError(403, 'Только для админа');
 });
 
@@ -119,6 +124,22 @@ app.get('/api/jackpot/:kind', async (req: any) => jackpotState(kind(req.params.k
 app.post('/api/jackpot/:kind/join', async (req: any) => jackpotJoin(kind(req.params.kind), uid(req), num(req.body?.amount)));
 
 app.get('/api/leaders', async (req: any) => leaders(uid(req), req.query?.period === 'previous' ? 'previous' : 'current'));
+
+// ---------- Plinko, рулетка, кейсы, апгрейд ----------
+app.get('/api/plinko/table', async (req: any) => plinkoTable(num(req.query?.rows) || 12, (req.query?.risk ?? 'mid') as any));
+app.post('/api/plinko', async (req: any) => plinko(uid(req), num(req.body?.amount), num(req.body?.rows), req.body?.risk));
+app.get('/api/roulette/table', async () => rouletteTable());
+app.post('/api/roulette', async (req: any) => roulette(uid(req), num(req.body?.amount)));
+app.get('/api/cases', async () => caseList());
+app.post('/api/cases/open', async (req: any) => openCase(uid(req), String(req.body?.case)));
+app.post('/api/upgrade', async (req: any) => upgrade(uid(req), num(req.body?.amount), num(req.body?.target)));
+
+// манифест TON Connect — кошелёк показывает по нему название и иконку
+app.get('/tonconnect-manifest.json', async () => ({
+  url: cfg.publicUrl || 'https://localhost',
+  name: 'BitKong',
+  iconUrl: (cfg.publicUrl || '') + '/icon.png',
+}));
 
 // ---------- админка ----------
 app.get('/api/admin/stats', async () => {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useApp } from '../lib/store';
 import { api, fmt, haptic, tg, GAME_NAMES } from '../lib/api';
 import { Avatar, Star } from '../ui/kit';
+import { tonPay } from '../lib/ton';
 import { Settings, Shield } from '../ui/icons';
 
 export default function Profile() {
@@ -78,7 +79,11 @@ export default function Profile() {
               <button onClick={() => copyTon(ton.amount)} className="flex-1 bg-moss rounded-lg px-3 py-2 text-left">{ton.amount} TON</button>
               <button onClick={() => copyTon(ton.comment)} className="flex-1 bg-moss rounded-lg px-3 py-2 text-left">{ton.comment}</button>
             </div>
-            <button onClick={() => (tg?.openLink ? tg.openLink(ton.link) : window.open(ton.link))} className="btn-lime w-full h-10">Открыть кошелёк</button>
+            <button onClick={async () => {
+              try { await tonPay(ton.address, ton.amount, ton.comment); toast('Платёж отправлен — баланс появится через минуту'); }
+              catch { tg?.openLink ? tg.openLink(ton.link) : window.open(ton.link); }
+            }} className="btn-lime w-full h-10">Оплатить из кошелька</button>
+            <button onClick={() => (tg?.openLink ? tg.openLink(ton.link) : window.open(ton.link))} className="btn-ghost w-full h-9 text-xs">Открыть ссылку вручную</button>
           </div>
         )}
         {!tg?.initData && <button onClick={faucet} className="btn-ghost w-full h-10 mt-2 text-sm">Тестовые 5000★ (dev)</button>}
