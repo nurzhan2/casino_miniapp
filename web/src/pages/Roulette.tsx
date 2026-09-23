@@ -59,7 +59,7 @@ export default function Roulette() {
           </svg>
           <div className="absolute inset-0 grid place-items-center pointer-events-none">
             {res ? <div className={`pop font-display text-lg ${res.payout > 0 ? 'text-lime glow' : 'text-white/50'}`}>{res.payout > 0 ? `+${fmt(res.payout)}` : 'мимо'}</div>
-              : <Emo n="wheel" size={38} />}
+              : <Emo n="wheel" size={38} className="spin-slow" />}
           </div>
         </div>
       </div>

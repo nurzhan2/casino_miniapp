@@ -143,3 +143,18 @@ export function initRipples() {
     setTimeout(() => s.remove(), 600);
   }, { passive: true });
 }
+
+/** Шлейф из искр под летящей ракетой */
+export function trail(x: number, y: number, power = 1) {
+  ensure();
+  for (let i = 0; i < 2 + power * 2; i++) {
+    parts.push({
+      x: x + (Math.random() - 0.5) * 10, y: y + (Math.random() - 0.5) * 8,
+      vx: (Math.random() - 0.5) * 1.6 - 0.6, vy: 1 + Math.random() * 2.2, g: 0.04,
+      life: 0, max: 26 + Math.random() * 22, size: 3 + Math.random() * 5 * power,
+      color: Math.random() < 0.5 ? '#b6ff3b' : Math.random() < 0.6 ? '#ffd43b' : '#ffffff',
+      rot: 0, vr: 0.2, shape: 'circle',
+    });
+  }
+  run();
+}

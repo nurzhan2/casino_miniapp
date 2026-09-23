@@ -4,12 +4,13 @@ import { api, fmt, haptic } from '../lib/api';
 import { TopBar, BetInput, Avatar, Star, useCountdown } from '../ui/kit';
 import { Logo, Rocket, Burst } from '../ui/icons';
 import { Emo } from '../ui/emoji';
-import { win as fxWin, lose as fxLose } from '../lib/fx';
+import { win as fxWin, lose as fxLose, trail } from '../lib/fx';
 
 const K = 0.00006;
 const mAt = (ms: number) => Math.floor(Math.exp(K * Math.max(0, ms)) * 100) / 100;
 
 export default function Crash() {
+  const rocketRef = useRef<HTMLDivElement>(null);
   const { crash: s, clock, me, toast, setBalance } = useApp();
   const [amount, setAmount] = useState(100);
   const [auto, setAuto] = useState('');
@@ -48,6 +49,16 @@ export default function Crash() {
     catch (e: any) { toast(e.message, 'err'); } finally { setBusy(false); }
   };
 
+  useEffect(() => {
+    if (s?.phase !== 'running') return;
+    const el = rocketRef.current;
+    const i = setInterval(() => {
+      const r = el?.getBoundingClientRect();
+      if (r) trail(r.left + r.width / 2, r.bottom - 6, Math.min(2.5, 0.6 + Math.log(Math.max(1, m))));
+    }, 45);
+    return () => clearInterval(i);
+  }, [s?.phase, m]);
+
   if (!s) return <TopBar title="Ракета" />;
   const W = 340, H = 200, list = pts.current;
   const yMax = Math.max(2, m * 1.25), n = Math.max(list.length, 60);
@@ -59,7 +70,7 @@ export default function Crash() {
       <TopBar title="Ракета" />
       <div className="flex gap-1.5 overflow-x-auto no-scrollbar py-2">
         {s.history.map((h: number, i: number) => (
-          <span key={i} className={`shrink-0 text-xs font-extrabold px-2.5 py-1 rounded-full ${h >= 2 ? 'bg-lime/15 text-lime' : 'bg-white/5 text-white/50'}`}>×{h}</span>
+          <span key={i} style={{ animationDelay: `${i * 25}ms` }} className={`row-in shrink-0 text-xs font-extrabold px-2.5 py-1 rounded-full ${h >= 2 ? 'bg-lime/15 text-lime' : 'bg-white/5 text-white/50'}`}>×{h}</span>
         ))}
       </div>
 
@@ -69,9 +80,9 @@ export default function Crash() {
           <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#b6ff3b" stopOpacity=".35" /><stop offset="1" stopColor="#b6ff3b" stopOpacity="0" /></linearGradient></defs>
           {path && <><path d={`${path} L${tip[0]},${H} L0,${H} Z`} fill="url(#g)" /><path d={path} stroke="#b6ff3b" strokeWidth="3" fill="none" /></>}
         </svg>
-        {s.phase === 'running' && <div className="absolute text-4xl" style={{ left: `${(tip[0] / W) * 100}%`, top: `${15 + (tip[1] / H) * 85 * 0.85}%`, transform: 'translate(-30%,-70%) rotate(-30deg)' }}><Emo n="rocket" size={54} className="drop-shadow-[0_0_18px_#b6ff3b66]" /></div>}
+        {s.phase === 'running' && <div ref={rocketRef} className="absolute text-4xl" style={{ left: `${(tip[0] / W) * 100}%`, top: `${15 + (tip[1] / H) * 85 * 0.85}%`, transform: 'translate(-30%,-70%) rotate(-30deg)' }}><Emo n="rocket" size={54} className="drop-shadow-[0_0_18px_#b6ff3b66]" /></div>}
         <div className="absolute inset-0 grid place-items-center pointer-events-none">
-          {s.phase === 'betting' && <div className="text-center"><div className="float flex justify-center"><Emo n="kong" size={78} /></div><div className="font-display text-lg mt-2">Старт через {left.toFixed(1)}с</div></div>}
+          {s.phase === 'betting' && <div className="text-center"><div className="float flex justify-center"><Emo n="kong" size={78} className="breathe" /></div><div className="font-display text-lg mt-2">Старт через {left.toFixed(1)}с</div></div>}
           {s.phase === 'running' && <div className={`font-display text-6xl tabular-nums ${m >= 2 ? 'text-lime glow' : ''}`}>×{m.toFixed(2)}</div>}
           {s.phase === 'crashed' && <div className="text-center pop"><div className="flex justify-center"><Emo n="boom" size={76} /></div><div className="font-display text-4xl text-danger">×{s.crash}</div></div>}
         </div>

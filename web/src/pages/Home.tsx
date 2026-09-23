@@ -48,7 +48,7 @@ export default function Home() {
     <div className="px-4 space-y-6 mt-1">
       <button onClick={() => go('bitkong')} className="w-full card p-4 flex items-center gap-3.5 text-left relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-lime/12 via-transparent to-transparent" />
-        <Emo n="kong" size={52} className="relative shrink-0 drop-shadow-[0_6px_16px_rgba(0,0,0,.5)]" />
+        <Emo n="kong" size={52} className="relative shrink-0 bob drop-shadow-[0_6px_16px_rgba(0,0,0,.5)]" />
         <div className="relative flex-1 min-w-0">
           <div className="font-display text-[15px]">Кэшбэк BitKong</div>
           <div className="text-[11px] text-white/55 mt-0.5">{me.level.rate}% с каждой ставки — при любом исходе</div>

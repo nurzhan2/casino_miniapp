@@ -65,7 +65,7 @@ export default function Mines() {
                 className={`aspect-square rounded-xl grid place-items-center transition-all ${cols === 7 ? 'text-xl' : cols === 5 ? 'text-3xl' : 'text-5xl'}
                   ${pending === c ? 'shake bg-banana/30' : ''}
                   ${shown ? (bomb ? (hit ? 'bg-danger pop' : 'bg-danger/25') : 'bg-lime/20 pop') : 'bg-moss border border-white/10 active:scale-95'}`}
-                style={{ opacity: !open && !shown && g ? 0.5 : 1 }}>
+                style={{ opacity: !open && !shown && g ? 0.5 : 1, animationDelay: `${(bomb ? c % 7 : 0) * 55}ms` }}>
                 {shown ? (bomb ? <Emo n="bomb" size={cols === 7 ? 24 : cols === 5 ? 36 : 54} /> : <Emo n="gem" size={cols === 7 ? 24 : cols === 5 ? 36 : 54} />) : pending === c ? <span className="w-2 h-2 rounded-full bg-banana animate-ping" /> : null}
               </button>
             );

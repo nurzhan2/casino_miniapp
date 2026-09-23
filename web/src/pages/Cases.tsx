@@ -63,7 +63,7 @@ export default function Cases() {
           {strip.map((d, i) => (
             <div key={i} className="shrink-0 grid place-items-center gap-1" style={{ width: ITEM_W }}>
               <div className="w-[72px] h-[72px] rounded-2xl bg-moss border border-white/10 grid place-items-center">
-                <Emo n={ICON[d % ICON.length]} size={40} />
+                <Emo n={ICON[d % ICON.length]} size={40} className={spin ? '' : 'tile-float'} />
               </div>
               <div className="text-[10px] font-extrabold text-white/60">×{c.drops[d].m}</div>
             </div>

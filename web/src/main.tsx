@@ -32,8 +32,9 @@ function Screens() {
   };
   return (
     <div className="max-w-md mx-auto pb-28">
+      <div className="bk-bg"><div className="bk-grid" /><div className="bk-orb bk-orb-1" /><div className="bk-orb bk-orb-2" /><div className="bk-orb bk-orb-3" /></div>
       {tabs.includes(screen) && <><Header /><LiveStrip /></>}
-      <div key={screen}>{page[screen] ?? <Home />}</div>
+      <div key={screen} className="screen-in">{page[screen] ?? <Home />}</div>
       {tabs.includes(screen) && <BottomNav />}
       <FxOverlay />
     </div>

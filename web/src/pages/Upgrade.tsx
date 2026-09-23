@@ -47,7 +47,7 @@ export default function Upgrade() {
           </div>
           <div className="absolute inset-0 grid place-items-center">
             {res ? <div className={`pop font-display text-2xl ${res.win ? 'text-lime glow' : 'text-danger'}`}>{res.win ? `+${fmt(res.payout)}★` : 'мимо'}</div>
-              : <div className="text-center"><Emo n="glowstar" size={40} className="mx-auto" /><div className="font-display text-2xl mt-1">×{target}</div></div>}
+              : <div className="text-center"><Emo n="glowstar" size={40} className="mx-auto breathe" /><div className="font-display text-2xl mt-1">×{target}</div></div>}
           </div>
         </div>
         <div className="text-center text-xs text-white/50 mt-3">

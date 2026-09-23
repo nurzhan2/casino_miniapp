@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '../lib/store';
 import { api, fmt, haptic, tg } from '../lib/api';
+import { useCountUp } from '../lib/anim';
 import { Logo } from '../ui/icons';
 import { Emo } from '../ui/emoji';
 
@@ -9,6 +10,7 @@ export default function BitKong() {
   const [busy, setBusy] = useState(false);
   const lv = me.level, levels = me.levels as any[];
   const cur = levels[lv.index - 1];
+  const cashShown = useCountUp(me.cashback, 700);
   const progress = lv.next ? Math.min(1, (me.wagered - cur.wagered) / (lv.next.wagered - cur.wagered)) : 1;
 
   const claim = async () => {
@@ -26,10 +28,10 @@ export default function BitKong() {
     <div className="px-4 space-y-3 mt-1">
       <div className="card p-5 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,#b6ff3b33,transparent_65%)]" />
-        <div className="float relative flex justify-center"><Emo n="kong" size={112} className="drop-shadow-[0_12px_28px_rgba(0,0,0,.55)]" /></div>
+        <div className="float relative flex justify-center"><Emo n="kong" size={112} data-idle="1" className="drop-shadow-[0_12px_28px_rgba(0,0,0,.55)]" /></div>
         <div className="font-display text-2xl mt-2 relative">BitKong кэшбэк</div>
         <div className="text-sm text-white/60 relative">Процент с каждой ставки — неважно, выиграл или проиграл</div>
-        <div className="font-display text-5xl text-lime glow mt-4 relative tabular-nums">{me.cashback.toFixed(2)}<span className="text-banana">★</span></div>
+        <div className="font-display text-5xl text-lime glow mt-4 relative tabular-nums">{cashShown.toFixed(2)}<span className="text-banana">★</span></div>
         <div className="text-xs text-white/40 relative">накоплено · всего получено {fmt(me.cashbackTotal)}★</div>
         <button disabled={busy || me.cashback < 1} onClick={claim} className="btn-lime w-full h-12 mt-4 relative">Забрать на баланс</button>
       </div>
