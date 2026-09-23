@@ -8,19 +8,27 @@ export default function Profile() {
   const { me, refresh, toast, go } = useApp();
   const [bets, setBets] = useState<any[]>([]);
   const [dep, setDep] = useState(100);
+  const [pays, setPays] = useState<any[]>([]);
+  const [ton, setTon] = useState<any>(null);
   const [wd, setWd] = useState('');
   const [seed, setSeed] = useState('');
   const [revealed, setRevealed] = useState<any>(null);
 
   useEffect(() => { api('/api/bets').then(setBets); }, [me.balance]);
+  useEffect(() => { api('/api/deposit/methods').then(setPays).catch(() => {}); }, []);
 
-  const deposit = async () => {
+  const deposit = async (method: string) => {
+    setTon(null);
     try {
-      const { link } = await api('/api/deposit', { amount: dep });
-      if (tg?.openInvoice) tg.openInvoice(link, (st: string) => { if (st === 'paid') { haptic('success'); toast(`+${fmt(dep)}★ зачислено`); setTimeout(refresh, 800); } });
-      else window.open(link);
+      const r = await api('/api/deposit', { amount: dep, method });
+      if (r.type === 'ton') { setTon(r); return; }                       // показываем адрес и комментарий
+      if (method === 'stars' && tg?.openInvoice) {
+        tg.openInvoice(r.link, (st: string) => { if (st === 'paid') { haptic('success'); toast(`+${fmt(dep)}★ зачислено`); setTimeout(refresh, 800); } });
+      } else if (tg?.openLink) tg.openLink(r.link);
+      else window.open(r.link);
     } catch (e: any) { toast(e.message, 'err'); }
   };
+  const copyTon = (v: string) => { navigator.clipboard?.writeText(v); toast('Скопировано'); };
   const withdraw = async () => {
     try { await api('/api/withdraw', { amount: Number(wd) }); toast('Заявка на вывод отправлена'); setWd(''); refresh(); }
     catch (e: any) { toast(e.message, 'err'); }
@@ -50,7 +58,29 @@ export default function Profile() {
             <button key={v} onClick={() => setDep(v)} className={`h-9 rounded-lg text-xs font-extrabold ${dep === v ? 'bg-lime text-jungle' : 'btn-ghost'}`}>{v}</button>
           ))}
         </div>
-        <button onClick={deposit} className="btn-lime w-full h-12 mt-2">Пополнить {fmt(dep)}★ через Telegram Stars</button>
+        <div className="space-y-2 mt-2">
+          {pays.length === 0 && <div className="text-xs text-white/40 text-center py-2">Способы пополнения пока не подключены</div>}
+          {pays.map((p: any, i: number) => (
+            <button key={p.id} onClick={() => deposit(p.id)} className={`w-full h-12 flex items-center justify-between px-4 ${i === 0 ? 'btn-lime' : 'btn-ghost'}`}>
+              <span className="font-extrabold">{p.title}</span>
+              <span className={`text-xs ${i === 0 ? 'opacity-70' : 'text-white/45'}`}>
+                {p.id === 'stars' ? `${fmt(dep)}★` : `≈ ${(dep / p.rate).toFixed(p.unit === '₽' ? 0 : 2)} ${p.unit}`}
+              </span>
+            </button>
+          ))}
+        </div>
+        {ton && (
+          <div className="card p-3 mt-2 text-xs space-y-2 border border-lime/30">
+            <div className="font-display text-sm">Перевод в TON</div>
+            <div className="text-white/50">Отправьте точную сумму и обязательно укажите комментарий — по нему зачислится баланс.</div>
+            <button onClick={() => copyTon(ton.address)} className="w-full text-left bg-moss rounded-lg px-3 py-2 break-all">{ton.address}</button>
+            <div className="flex gap-2">
+              <button onClick={() => copyTon(ton.amount)} className="flex-1 bg-moss rounded-lg px-3 py-2 text-left">{ton.amount} TON</button>
+              <button onClick={() => copyTon(ton.comment)} className="flex-1 bg-moss rounded-lg px-3 py-2 text-left">{ton.comment}</button>
+            </div>
+            <button onClick={() => (tg?.openLink ? tg.openLink(ton.link) : window.open(ton.link))} className="btn-lime w-full h-10">Открыть кошелёк</button>
+          </div>
+        )}
         {!tg?.initData && <button onClick={faucet} className="btn-ghost w-full h-10 mt-2 text-sm">Тестовые 5000★ (dev)</button>}
         <div className="flex gap-2 mt-3">
           <input value={wd} onChange={e => setWd(e.target.value.replace(/\D/g, ''))} placeholder="Сумма вывода (от 100)"

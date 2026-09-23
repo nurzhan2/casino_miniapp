@@ -31,6 +31,9 @@ export const DEFAULTS = {
     { place: 3, stars: 250, gift: '' },
   ],
   jackpot_countdown: 20,     // секунд после входа второго игрока
+  rate_usdt: 75,             // звёзд за 1 USDT
+  rate_ton: 150,             // звёзд за 1 TON
+  rate_rub: 0.75,            // звёзд за 1 ₽ (100 ₽ = 75★)
 };
 export type Settings = typeof DEFAULTS;
 export const SETTING_KEYS = Object.keys(DEFAULTS) as (keyof Settings)[];

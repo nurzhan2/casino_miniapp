@@ -18,8 +18,14 @@ import { jackpotJoin, jackpotState, startJackpots, KINDS } from './games/jackpot
 import type { Kind } from './games/jackpot.ts';
 import { leaders, awardLeaders } from './leaders.ts';
 import { createInvoice, handleUpdate, startBot } from './bot.ts';
+import { createDeposit, methods, cryptoBotVerify, cryptoBotWebhook, sbpWebhook, startPayments } from './payments.ts';
 
 const app = Fastify({ logger: { level: 'warn' } });
+// сырое тело нужно для проверки подписи вебхука CryptoBot
+app.addContentTypeParser('application/json', { parseAs: 'string' }, (req: any, body: string, done) => {
+  req.rawBody = body;
+  try { done(null, body ? JSON.parse(body) : {}); } catch (e) { done(e as Error); }
+});
 await app.register(cors, { origin: true });
 await app.register(websocket);
 
@@ -69,9 +75,19 @@ app.post('/api/fair/rotate', async (req: any) => rotateSeed(uid(req), req.body?.
 
 app.post('/api/deposit', async (req: any) => {
   const amount = num(req.body?.amount);
-  if (!Number.isInteger(amount) || amount < 1 || amount > 100000) throw new HttpError(400, 'Сумма от 1 до 100 000 ⭐');
-  if (!cfg.botToken) throw new HttpError(400, 'Бот не подключён (BOT_TOKEN)');
-  return { link: await createInvoice(uid(req), amount) };
+  return createDeposit(uid(req), amount, String(req.body?.method ?? 'stars'), req.body?.asset);
+});
+app.get('/api/deposit/methods', async () => methods().filter(m => m.enabled));
+
+// вебхуки платёжек
+app.post('/pay/cryptobot', async (req: any, reply) => {
+  if (!cryptoBotVerify(req.rawBody ?? '', req.headers['crypto-pay-api-signature'])) return reply.status(403).send({ error: 'bad signature' });
+  cryptoBotWebhook(req.body);
+  return { ok: true };
+});
+app.post('/pay/sbp', async (req: any) => {
+  sbpWebhook(req.body, String(req.headers['x-webhook-secret'] ?? ''));
+  return { ok: true };
 });
 
 app.post('/api/withdraw', async (req: any) => {
@@ -184,6 +200,7 @@ if (existsSync(dist)) {
 
 startCrash();
 startJackpots();
+startPayments();
 await app.listen({ port: cfg.port, host: '0.0.0.0' });
 console.log(`BitKong server :${cfg.port}${cfg.dev ? ' [DEV]' : ''}`);
 startBot(webhookSecret).catch(e => console.error('[bot]', e.message));
