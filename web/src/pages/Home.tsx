@@ -9,6 +9,7 @@ const PVP = [
   { k: 'arena', t: 'Арена', d: 'Зона больше — выше вероятность', e: 'swords', a: '#5a7dff', b: '#22276e' },
 ];
 const SOLO = [
+  { k: 'tower', t: 'Tower', d: 'Лезь на вершину башни — до ×10 000', e: 'kong', a: '#7ed321', b: '#1f4d0c', tag: 'ХИТ' },
   { k: 'crash', t: 'Ракета', d: 'Забрать до взрыва', e: 'rocket', a: '#8b5cff', b: '#2c1466', tag: 'ТОП' },
   { k: 'mines', t: 'Мины', d: 'Кристаллы против бомб', e: 'bomb', a: '#1fa2ff', b: '#0a3c69' },
   { k: 'coinflip', t: 'Coinflip', d: 'Орёл, решка или ребро', e: 'coin', a: '#ffb13b', b: '#7d3c0e' },

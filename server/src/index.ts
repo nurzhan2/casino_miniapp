@@ -20,6 +20,7 @@ import { leaders, awardLeaders } from './leaders.ts';
 import { createInvoice, handleUpdate, startBot } from './bot.ts';
 import { createDeposit, methods, cryptoBotVerify, cryptoBotWebhook, sbpWebhook, startPayments } from './payments.ts';
 import { plinko, plinkoTable, roulette, rouletteTable, caseList, openCase, upgrade } from './games/extras.ts';
+import { towerState, towerTable, towerStart, towerStep, towerCashout } from './games/tower.ts';
 import { rateLimit } from './guard.ts';
 
 const app = Fastify({ logger: { level: 'warn' } });
@@ -133,6 +134,13 @@ app.post('/api/roulette', async (req: any) => roulette(uid(req), num(req.body?.a
 app.get('/api/cases', async () => caseList());
 app.post('/api/cases/open', async (req: any) => openCase(uid(req), String(req.body?.case)));
 app.post('/api/upgrade', async (req: any) => upgrade(uid(req), num(req.body?.amount), num(req.body?.target)));
+
+// ---------- Tower ----------
+app.get('/api/tower', async req => towerState(uid(req)));
+app.get('/api/tower/table', async (req: any) => towerTable((req.query?.diff ?? 'easy') as any));
+app.post('/api/tower/start', async (req: any) => towerStart(uid(req), num(req.body?.amount), req.body?.diff));
+app.post('/api/tower/step', async (req: any) => towerStep(uid(req), num(req.body?.col)));
+app.post('/api/tower/cashout', async req => towerCashout(uid(req)));
 
 // манифест TON Connect — кошелёк показывает по нему название и иконку
 app.get('/tonconnect-manifest.json', async () => ({

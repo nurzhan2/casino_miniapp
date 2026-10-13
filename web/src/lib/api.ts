@@ -58,4 +58,4 @@ export function connectWs() {
 
 export const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 export const fmt = (n: number) => Math.floor(n).toLocaleString('ru-RU');
-export const GAME_NAMES: Record<string, string> = { crash: 'Ракета', mines: 'Мины', coinflip: 'Coinflip', pvp: 'PvP', arena: 'Арена' };
+export const GAME_NAMES: Record<string, string> = { tower: 'Tower', crash: 'Ракета', mines: 'Мины', coinflip: 'Coinflip', pvp: 'PvP', arena: 'Арена' };
