@@ -90,7 +90,7 @@ export default function Profile() {
             <button onClick={() => (tg?.openLink ? tg.openLink(ton.link) : window.open(ton.link))} className="btn-ghost w-full h-9 text-xs">Открыть ссылку вручную</button>
           </div>
         )}
-        {!tg?.initData && <button onClick={faucet} className="btn-ghost w-full h-10 mt-2 text-sm">Тестовые 5000★ (dev)</button>}
+        {me.tester && <button onClick={faucet} className="btn-ghost w-full h-10 mt-2 text-sm border-banana/40 text-banana">+5000★ бесплатно (тест)</button>}
         <div className="flex gap-2 mt-3">
           <input value={wd} onChange={e => setWd(e.target.value.replace(/\D/g, ''))} placeholder="Сумма вывода (от 100)"
             className="flex-1 bg-moss rounded-xl px-3 h-11 outline-none border border-white/10 text-sm" />

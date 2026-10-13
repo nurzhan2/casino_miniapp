@@ -7,6 +7,7 @@ export const cfg = {
   publicUrl: (process.env.PUBLIC_URL ?? '').replace(/\/$/, ''),
   sessionSecret: process.env.SESSION_SECRET ?? 'dev-secret-change-me',
   admins: (process.env.ADMIN_IDS ?? '').split(',').map(s => s.trim()).filter(Boolean).map(Number),
+  testers: (process.env.TESTER_IDS ?? '').split(',').map(s => s.trim()).filter(Boolean).map(Number),
   dev: process.env.DEV === '1',
   dbPath: process.env.DB_PATH ?? 'data/bitkong.db',
 };

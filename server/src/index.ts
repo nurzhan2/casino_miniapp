@@ -34,6 +34,8 @@ await app.register(websocket);
 
 const webhookSecret = createHash('sha256').update('wh' + cfg.botToken).digest('hex').slice(0, 32);
 const isAdmin = (id: number) => cfg.admins.includes(id);
+const isTester = (id: number) => cfg.dev || cfg.testers.includes(id) || cfg.admins.includes(id);
+const meOut = (id: number) => ({ ...me(id, isAdmin(id), cfg.botUsername), tester: isTester(id) });
 const uid = (req: any): number => req.userId;
 const num = (v: any) => Number(v);
 
@@ -66,13 +68,13 @@ app.post('/api/auth', async (req: any) => {
   else if (cfg.dev && devUser?.id) { user = devUser; startParam = devUser.startParam ?? null; }
   if (!user) throw new HttpError(401, 'Откройте приложение из Telegram');
   upsertUser(user, startParam);
-  return { token: issueToken(user.id), me: me(user.id, isAdmin(user.id), cfg.botUsername) };
+  return { token: issueToken(user.id), me: meOut(user.id) };
 });
 
 app.get('/api/public/config', async () => ({ dev: cfg.dev, bot: cfg.botUsername }));
 
 // ---------- профиль / кошелёк ----------
-app.get('/api/me', async req => me(uid(req), isAdmin(uid(req)), cfg.botUsername));
+app.get('/api/me', async req => meOut(uid(req)));
 app.get('/api/history', async req => db.prepare('SELECT delta, kind, ref, created_at FROM ledger WHERE user_id=? ORDER BY id DESC LIMIT 50').all(uid(req)));
 app.get('/api/bets', async req => db.prepare("SELECT id, game, amount, payout, multiplier, status, created_at FROM bets WHERE user_id=? AND status!='open' ORDER BY id DESC LIMIT 30").all(uid(req)));
 app.get('/api/live', async () => ({ items: liveFeed(), online: online() }));
@@ -209,7 +211,12 @@ app.post('/api/admin/withdrawals/:id', async (req: any) => {
 });
 
 // ---------- dev ----------
-if (cfg.dev) app.post('/api/dev/faucet', async req => { tx(() => move(uid(req), 5000, 'dev_faucet')); pushBalance(uid(req)); return { ok: true }; });
+app.post('/api/dev/faucet', async req => {
+  if (!isTester(uid(req))) throw new HttpError(403, 'Только для тестеров');
+  tx(() => move(uid(req), 5000, 'test_faucet'));
+  pushBalance(uid(req));
+  return { ok: true };
+});
 
 // ---------- WebSocket ----------
 app.get('/ws', { websocket: true }, (socket: any, req: any) => {
