@@ -70,7 +70,7 @@ function spin(kind: Kind) {
   let acc = 0, winner: P | undefined;
   for (const p of r.players.values()) { acc += p.amount / r.total; if (roll < acc) { winner = p; break; } }
   winner ??= [...r.players.values()].at(-1)!;
-  const payout = Math.floor(r.total * getSetting('rtp'));
+  const payout = Math.floor(r.total * (1 - getSetting('pvp_rake') / 100));   // владелец забирает свой процент с банка
   tx(() => {
     for (const p of r.players.values())
       p.betIds.forEach((id, i) => {

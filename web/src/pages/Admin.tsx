@@ -3,6 +3,7 @@ import { useApp } from '../lib/store';
 import { api, fmt, GAME_NAMES } from '../lib/api';
 import { TopBar } from '../ui/kit';
 import { Close } from '../ui/icons';
+import { SkeletonList } from '../ui/bits';
 
 const Num = ({ label, value, onChange, step = 1 }: any) => (
   <label className="flex items-center justify-between gap-2 text-sm py-1">
@@ -34,7 +35,7 @@ export default function Admin() {
   const set = (k: string, v: any) => setCfg((c: any) => ({ ...c, [k]: v }));
   const setRow = (k: string, i: number, f: string, v: any) => set(k, cfg[k].map((r: any, j: number) => j === i ? { ...r, [f]: v } : r));
 
-      <TopBar title="Админка" />
+  if (!st || !cfg) return <div className="px-4"><TopBar title="Админка" /><SkeletonList n={5} /></div>;
   const margin = st.total.wagered - st.total.paid;
   return (
     <div className="px-4 space-y-3">
@@ -59,6 +60,12 @@ export default function Admin() {
         <Num label="Макс. ставка ★" value={cfg.max_bet} onChange={(v: number) => set('max_bet', v)} />
         <Num label="Реферальный %" value={cfg.ref_rate} step={0.1} onChange={(v: number) => set('ref_rate', v)} />
         <Num label="Таймер PvP/Арены, сек" value={cfg.jackpot_countdown} onChange={(v: number) => set('jackpot_countdown', v)} />
+        <Num label="Комиссия с банка PvP, %" value={cfg.pvp_rake} step={1} onChange={(v: number) => set('pvp_rake', v)} />
+
+        <div className="font-display text-sm mt-4 mb-2">Курс пополнений</div>
+        <Num label="Звёзд за 1 ₽" value={cfg.rate_rub} step={0.01} onChange={(v: number) => set('rate_rub', v)} />
+        <Num label="Звёзд за 1 TON" value={cfg.rate_ton} step={1} onChange={(v: number) => set('rate_ton', v)} />
+        <Num label="Звёзд за 1 USDT" value={cfg.rate_usdt} step={1} onChange={(v: number) => set('rate_usdt', v)} />
 
         <div className="font-display text-sm mt-4 mb-2">Уровни кэшбэка</div>
         <div className="grid grid-cols-[1fr_1fr_32px] gap-2 text-[11px] text-white/50"><span>Оборот от ★</span><span>Кэшбэк %</span><span /></div>
@@ -117,6 +124,8 @@ export default function Admin() {
             <div className="flex gap-2 mt-1.5">
               <input value={delta[u.id] ?? ''} onChange={e => setDelta(d => ({ ...d, [u.id]: e.target.value }))} placeholder="±звёзды" className={cell} />
               <button className="btn-ghost px-3 text-xs" onClick={() => run(() => api('/api/admin/balance', { userId: u.id, delta: Number(delta[u.id]) }), 'Баланс изменён')}>Начислить</button>
+              <button className="btn-ghost px-3 text-xs" onClick={() => run(() => api('/api/admin/balance', { userId: u.id, mode: 'set', value: Number(delta[u.id]) || 0 }), 'Баланс выставлен')}>Выставить</button>
+              <button className="btn-ghost px-3 text-xs" onClick={() => confirm(`Обнулить баланс ${u.username ? '@' + u.username : u.id}?`) && run(() => api('/api/admin/balance', { userId: u.id, mode: 'set', value: 0 }), 'Баланс обнулён')}>Обнулить</button>
               <button className="btn-ghost px-3 text-xs" onClick={() => run(() => api('/api/admin/ban', { userId: u.id, banned: !u.banned }), u.banned ? 'Разбанен' : 'Забанен')}>{u.banned ? 'Разбан' : 'Бан'}</button>
             </div>
           </div>

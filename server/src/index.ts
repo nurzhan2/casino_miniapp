@@ -171,11 +171,15 @@ app.get('/api/admin/users', async (req: any) => {
     WHERE ?='' OR username LIKE ? OR CAST(id AS TEXT)=? ORDER BY wagered DESC LIMIT 50`).all(q, `%${q}%`, q);
 });
 app.post('/api/admin/balance', async (req: any) => {
-  const id = num(req.body?.userId), delta = num(req.body?.delta);
-  if (!Number.isInteger(delta) || delta === 0) throw new HttpError(400, 'Укажите сумму');
-  tx(() => move(id, delta, 'admin', String(uid(req))));
+  const id = num(req.body?.userId);
+  const u = db.prepare('SELECT balance FROM users WHERE id=?').get(id) as any;
+  if (!u) throw new HttpError(404, 'Игрок не найден');
+  // mode: 'set' — выставить баланс ровно (в том числе 0), иначе прибавить/убавить
+  const delta = req.body?.mode === 'set' ? num(req.body?.value) - u.balance : num(req.body?.delta);
+  if (!Number.isInteger(delta)) throw new HttpError(400, 'Укажите сумму');
+  if (delta !== 0) tx(() => move(id, delta, 'admin', String(uid(req))));
   pushBalance(id);
-  return { ok: true };
+  return { ok: true, balance: u.balance + delta };
 });
 app.post('/api/admin/ban', async (req: any) => {
   db.prepare('UPDATE users SET banned=? WHERE id=?').run(req.body?.banned ? 1 : 0, num(req.body?.userId));
