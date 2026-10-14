@@ -21,6 +21,7 @@ import { createInvoice, handleUpdate, startBot } from './bot.ts';
 import { createDeposit, methods, cryptoBotVerify, cryptoBotWebhook, sbpWebhook, startPayments } from './payments.ts';
 import { plinko, plinkoTable, roulette, rouletteTable, caseList, openCase, upgrade } from './games/extras.ts';
 import { towerState, towerTable, towerStart, towerStep, towerCashout } from './games/tower.ts';
+import { ranksState, openFreeCase } from './ranks.ts';
 import { rateLimit } from './guard.ts';
 
 const app = Fastify({ logger: { level: 'warn' } });
@@ -136,6 +137,10 @@ app.post('/api/roulette', async (req: any) => roulette(uid(req), num(req.body?.a
 app.get('/api/cases', async () => caseList());
 app.post('/api/cases/open', async (req: any) => openCase(uid(req), String(req.body?.case)));
 app.post('/api/upgrade', async (req: any) => upgrade(uid(req), num(req.body?.amount), num(req.body?.target)));
+
+// ---------- Звания и бесплатные кейсы ----------
+app.get('/api/ranks', async req => ranksState(uid(req)));
+app.post('/api/ranks/open', async (req: any) => { const r = openFreeCase(uid(req), String(req.body?.case)); pushBalance(uid(req)); return r; });
 
 // ---------- Tower ----------
 app.get('/api/tower', async req => towerState(uid(req)));

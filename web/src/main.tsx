@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import Admin from './pages/Admin';
 import Plinko from './pages/Plinko';
 import Tower from './pages/Tower';
+import Ranks from './pages/Ranks';
 import Roulette from './pages/Roulette';
 import Cases from './pages/Cases';
 import Upgrade from './pages/Upgrade';
@@ -29,7 +30,7 @@ function Screens() {
   const page: Record<string, any> = {
     home: <Home />, crash: <Crash />, mines: <Mines />, coinflip: <Coinflip />,
     pvp: <Jackpot kind="pvp" />, arena: <Jackpot kind="arena" />,
-    tower: <Tower />, plinko: <Plinko />, roulette: <Roulette />, cases: <Cases />, upgrade: <Upgrade />,
+    tower: <Tower />, ranks: <Ranks />, plinko: <Plinko />, roulette: <Roulette />, cases: <Cases />, upgrade: <Upgrade />,
     leaders: <Leaders />, bitkong: <BitKong />, profile: <Profile />, admin: <Admin />,
   };
   return (

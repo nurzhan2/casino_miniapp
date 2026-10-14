@@ -18,6 +18,14 @@ const MAP: Record<string, string> = {
   medal1: '1st%20place%20medal/3D/1st_place_medal_3d.png',
   medal2: '2nd%20place%20medal/3D/2nd_place_medal_3d.png',
   medal3: '3rd%20place%20medal/3D/3rd_place_medal_3d.png',
+  cub: 'Tiger%20face/3D/tiger_face_3d.png',
+  tiger: 'Tiger/3D/tiger_3d.png',
+  lord: 'Lion/3D/lion_3d.png',
+  friend: 'Wrapped%20gift/3D/wrapped_gift_3d.png',
+  shield: 'Shield/3D/shield_3d.png',
+  key: 'Key/3D/key_3d.png',
+  lock: 'Locked/3D/locked_3d.png',
+  crown: 'Crown/3D/crown_3d.png',
 };
 
 export type EmoName = keyof typeof MAP;

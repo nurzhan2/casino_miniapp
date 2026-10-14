@@ -10,8 +10,8 @@ import { confetti } from '../lib/fx';
 export default function BitKong() {
   const { me, refresh, toast } = useApp();
   const [busy, setBusy] = useState(false);
-  const lv = me.level, levels = me.levels as any[];
-  const cur = levels[lv.index - 1];
+  const lv = me.level;
+  const { go } = useApp();
   const cashShown = useCountUp(me.cashback, 700);
   const [levelUp, setLevelUp] = useState(false);
   const prevLevel = useRef(lv.index);
@@ -19,7 +19,7 @@ export default function BitKong() {
     if (lv.index > prevLevel.current) { setLevelUp(true); sfx.levelUp(); confetti(90); setTimeout(() => setLevelUp(false), 2600); }
     prevLevel.current = lv.index;
   }, [lv.index]);
-  const progress = lv.next ? Math.min(1, (me.wagered - cur.wagered) / (lv.next.wagered - cur.wagered)) : 1;
+  const progress = lv.next ? Math.min(1, (me.wagered - lv.from) / (lv.next.wagered - lv.from)) : 1;
 
   const claim = async () => {
     setBusy(true);
@@ -52,20 +52,14 @@ export default function BitKong() {
 
       <div className="card p-4">
         <div className="flex items-baseline justify-between">
-          <div className="font-display">{lv.rate}% <span className="text-lime">/ Уровень {lv.index}</span></div>
+          <div className="font-display">{lv.rate}% <span className="text-lime">/ {lv.name}</span></div>
           {lv.next && <div className="text-xs text-white/50">ещё {fmt(lv.next.wagered - me.wagered)}★ до {lv.next.rate}%</div>}
         </div>
         <div className="h-2.5 bg-moss rounded-full mt-3 overflow-hidden wave-bar">
           <div className="h-full bg-lime rounded-full transition-all" style={{ width: `${progress * 100}%` }} />
         </div>
-        <div className="grid mt-3 text-center text-[11px]" style={{ gridTemplateColumns: `repeat(${levels.length}, 1fr)` }}>
-          {levels.map((l, i) => (
-            <div key={i} className={i + 1 === lv.index ? 'text-lime font-extrabold' : i + 1 < lv.index ? 'text-white/70' : 'text-white/30'}>
-              <div>{l.rate}%</div><div className="text-[9px]">{l.wagered >= 1000 ? fmt(l.wagered / 1000) + 'k' : l.wagered}</div>
-            </div>
-          ))}
-        </div>
-        <div className="text-[11px] text-white/40 mt-2">Уровень растёт от общего оборота ставок.</div>
+        <div className="text-[11px] text-white/40 mt-2">Уровень растёт от общего оборота ставок. За каждый уровень — звёзды и кейсы.</div>
+        <button onClick={() => go('ranks')} className="btn-ghost w-full h-10 mt-3 text-sm">Все звания и награды →</button>
       </div>
 
       <div className="card p-4 bg-gradient-to-br from-berry/25 to-transparent">

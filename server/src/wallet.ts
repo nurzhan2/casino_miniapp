@@ -3,6 +3,7 @@ import { newSeed, sha256 } from './fair.ts';
 import { toUser, broadcast } from './hub.ts';
 import { randomBytes } from 'node:crypto';
 import { REF_MIN_WAGERED } from './guard.ts';
+import { onWager, rankName } from './ranks.ts';
 
 export class HttpError extends Error {
   status: number;
@@ -38,7 +39,7 @@ export function getUser(id: number) {
 }
 
 export function levelFor(wagered: number) {
-  const levels = getSetting('cashback_levels');
+  const levels = getSetting('ranks') as any[];
   let i = 0;
   for (let k = 0; k < levels.length; k++) if (wagered >= levels[k].wagered) i = k;
   return { index: i + 1, rate: levels[i].rate, next: levels[i + 1] ?? null, levels };
@@ -63,6 +64,7 @@ export function placeBet(userId: number, game: string, amount: number, meta?: un
   const u = getUser(userId);
   if (u.banned) throw new HttpError(403, 'Доступ закрыт');
   move(userId, -amount, 'bet', game);
+  onWager(u, amount);
   const { rate } = levelFor(u.wagered);
   const cb = Math.floor(amount * rate * 10); // amount * rate% * 1000 милли
   db.prepare('UPDATE users SET wagered=wagered+?, cashback=cashback+?, cashback_total=cashback_total+? WHERE id=?')
@@ -119,7 +121,7 @@ export function me(userId: number, isAdmin: boolean, botUsername: string) {
   return {
     id: u.id, name: displayName(u), photo: u.photo_url, balance: u.balance,
     cashback: u.cashback / 1000, cashbackTotal: u.cashback_total / 1000, wagered: u.wagered,
-    level: { index: lv.index, rate: lv.rate, next: lv.next }, levels: lv.levels,
+    level: { index: lv.index, rate: lv.rate, next: lv.next, name: rankName(lv.index), from: lv.levels[lv.index - 1]?.wagered ?? 0 },
     refRate: getSetting('ref_rate'),
     refLink: botUsername ? `https://t.me/${botUsername}?startapp=ref_${u.id}` : `ref_${u.id}`,
     referrals: (db.prepare('SELECT COUNT(*) c FROM users WHERE ref_by=?').get(userId) as any).c,
