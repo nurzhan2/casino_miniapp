@@ -41,7 +41,7 @@ export default function Plinko() {
       const i = Math.floor(p), frac = p - i;
       const rights = path.slice(0, i).reduce((a, b) => a + b, 0) + (path[i] ?? 0) * frac;
       const offset = rights - p / 2;                       // смещение в шагах от центра
-      setBall({ x: Math.min(0.96, Math.max(0.04, 0.5 + offset / rows)), y: p / path.length });
+      setBall({ x: 0.5 + offset / (rows + 1), y: p / path.length });
       if (p < path.length) raf.current = requestAnimationFrame(loop);
       else { haptic('medium'); res(); }
     };
@@ -58,11 +58,10 @@ export default function Plinko() {
 
       <div className="card p-3 mt-2 relative overflow-hidden" style={{ aspectRatio: '1 / 0.92' }}>
         <div className="absolute inset-3 bottom-8">
-          {pegs.map(r => (
-            <div key={r} className="absolute flex justify-center gap-[3%] w-full" style={{ top: `${(r / rows) * 100}%` }}>
-              {[...Array(r + 3).keys()].map(c => <span key={c} className="w-1.5 h-1.5 rounded-full bg-white/25" />)}
-            </div>
-          ))}
+          {pegs.map(r => [...Array(r + 3).keys()].map(c => (
+            <span key={r + '-' + c} className="absolute w-1.5 h-1.5 rounded-full bg-white/30 -translate-x-1/2 -translate-y-1/2"
+              style={{ left: `${(0.5 + (c - (r + 2) / 2) / (rows + 1)) * 100}%`, top: `${((r + 0.5) / rows) * 100}%` }} />
+          )))}
           {ball && (
             <div className="absolute w-3.5 h-3.5 rounded-full bg-lime shadow-[0_0_14px_#b6ff3b] -translate-x-1/2 -translate-y-1/2"
               style={{ left: `${ball.x * 100}%`, top: `${ball.y * 100}%` }} />

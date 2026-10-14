@@ -33,8 +33,8 @@ export function FxOverlay() {
   return (
     <div className="fixed inset-0 z-[58] grid place-items-center pointer-events-none px-8">
       {e.kind === 'win' ? <WinCard amount={e.amount ?? 0} multiplier={e.multiplier} /> : (
-        <div className="fx-lose text-center">
-          <div className="font-display text-4xl text-danger">{e.text}</div>
+        <div className="fx-lose text-center w-full">
+          <div className="font-display text-[30px] leading-tight text-danger break-words">{e.text}</div>
         </div>
       )}
     </div>

@@ -31,7 +31,7 @@ export default function Coinflip() {
       // долгое вращение с замедлением в конце — момент «на грани»
       const turns = 360 * 8;
       const baseY = Math.ceil(rot.y / 360) * 360 + turns;
-      setRot({ y: baseY + (r.result === 'tails' ? 180 : 0), x: r.result === 'edge' ? 90 : 0 });
+      setRot({ y: baseY + (r.result === 'tails' ? 180 : 0), x: r.result === 'edge' ? 76 : 0 });
       await sleep(2600);
       setRes(r);
       setRecent(x => [r.result, ...x].slice(0, 12));
@@ -46,8 +46,13 @@ export default function Coinflip() {
       <div className="card mt-2 h-64 grid place-items-center relative overflow-hidden" style={{ perspective: 800 }}>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_60%,#b6ff3b1f,transparent_60%)]" />
         <div className="relative w-36 h-36" style={{ transformStyle: 'preserve-3d', transform: `rotateX(${rot.x}deg) rotateY(${rot.y}deg)`, transition: spinning ? 'transform 2.6s cubic-bezier(.15,.7,.1,1)' : 'none' }}>
-          <div className="absolute inset-0 rounded-full grid place-items-center bg-gradient-to-br from-banana to-[#c98a00] border-4 border-[#ffe98a] shadow-2xl" style={{ backfaceVisibility: 'hidden' }}><Emo n="kong" size={96} /></div>
-          <div className="absolute inset-0 rounded-full grid place-items-center bg-gradient-to-br from-lime to-[#5e9b10] border-4 border-[#e2ffb0] shadow-2xl" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}><Emo n="banana" size={92} /></div>
+          {/* толщина монеты: слои ребра, чтобы при выпадении ребра монета не исчезала */}
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className="absolute inset-0 rounded-full bg-gradient-to-r from-[#8a5a00] via-[#ffd76a] to-[#8a5a00]"
+              style={{ transform: `translateZ(${i - 5}px)` }} />
+          ))}
+          <div className="absolute inset-0 rounded-full grid place-items-center bg-gradient-to-br from-banana to-[#c98a00] border-4 border-[#ffe98a] shadow-2xl" style={{ backfaceVisibility: 'hidden', transform: 'translateZ(6px)' }}><Emo n="kong" size={96} /></div>
+          <div className="absolute inset-0 rounded-full grid place-items-center bg-gradient-to-br from-lime to-[#5e9b10] border-4 border-[#e2ffb0] shadow-2xl" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg) translateZ(6px)' }}><Emo n="banana" size={92} /></div>
         </div>
         {res && <div className={`absolute bottom-4 font-display pop ${res.payout > 0 ? 'text-lime glow' : 'text-danger'}`}>
           {res.payout > 0 ? `+${fmt(res.payout)}★` : `${SIDES.find(s => s.k === res.result)?.t} — мимо`}</div>}

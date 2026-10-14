@@ -162,12 +162,12 @@ export default function Admin() {
             <div className="flex justify-between"><b>{u.username ? '@' + u.username : u.first_name} <span className="text-white/30 font-normal">{u.id}</span></b>
               <span>{fmt(u.balance)}★</span></div>
             <div className="text-[11px] text-white/40">оборот {fmt(u.wagered)}★ · кэшбэк {(u.cashback / 1000).toFixed(2)}★</div>
-            <div className="flex gap-2 mt-1.5">
-              <input value={delta[u.id] ?? ''} onChange={e => setDelta(d => ({ ...d, [u.id]: e.target.value }))} placeholder="±звёзды" className={cell} />
-              <button className="btn-ghost px-3 text-xs" onClick={() => run(() => api('/api/admin/balance', { userId: u.id, delta: Number(delta[u.id]) }), 'Баланс изменён')}>Начислить</button>
-              <button className="btn-ghost px-3 text-xs" onClick={() => run(() => api('/api/admin/balance', { userId: u.id, mode: 'set', value: Number(delta[u.id]) || 0 }), 'Баланс выставлен')}>Выставить</button>
-              <button className="btn-ghost px-3 text-xs" onClick={() => confirm(`Обнулить баланс ${u.username ? '@' + u.username : u.id}?`) && run(() => api('/api/admin/balance', { userId: u.id, mode: 'set', value: 0 }), 'Баланс обнулён')}>Обнулить</button>
-              <button className="btn-ghost px-3 text-xs" onClick={() => run(() => api('/api/admin/ban', { userId: u.id, banned: !u.banned }), u.banned ? 'Разбанен' : 'Забанен')}>{u.banned ? 'Разбан' : 'Бан'}</button>
+            <input value={delta[u.id] ?? ''} onChange={e => setDelta(d => ({ ...d, [u.id]: e.target.value }))} placeholder="Сумма, ★ (минус — списать)" className={cell + ' mt-1.5'} inputMode="numeric" />
+            <div className="grid grid-cols-4 gap-1.5 mt-1.5">
+              <button className="btn-ghost h-8 text-[11px]" onClick={() => run(() => api('/api/admin/balance', { userId: u.id, delta: Number(delta[u.id]) }), 'Баланс изменён')}>Начислить</button>
+              <button className="btn-ghost h-8 text-[11px]" onClick={() => run(() => api('/api/admin/balance', { userId: u.id, mode: 'set', value: Number(delta[u.id]) || 0 }), 'Баланс выставлен')}>Выставить</button>
+              <button className="btn-ghost h-8 text-[11px]" onClick={() => confirm(`Обнулить баланс ${u.username ? '@' + u.username : u.id}?`) && run(() => api('/api/admin/balance', { userId: u.id, mode: 'set', value: 0 }), 'Баланс обнулён')}>Обнулить</button>
+              <button className="btn-ghost h-8 text-[11px]" onClick={() => run(() => api('/api/admin/ban', { userId: u.id, banned: !u.banned }), u.banned ? 'Разбанен' : 'Забанен')}>{u.banned ? 'Разбан' : 'Бан'}</button>
             </div>
           </div>
         ))}

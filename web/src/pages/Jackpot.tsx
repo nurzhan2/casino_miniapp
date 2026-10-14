@@ -62,7 +62,7 @@ function Arena({ s, spinning }: { s: any; spinning: boolean }) {
         <div key={p.id} className="absolute inset-y-0 grid place-items-center" style={{ left: `${l * 100}%`, width: `${p.chance * 100}%`, background: p.color + 'cc' }}>
           {p.chance > 0.12 && <Avatar src={p.photo} name={p.name} size={36} />}
         </div>); })}
-      {s.players.length === 0 && <div className="absolute inset-0 grid place-items-center text-white/40 font-bold">Ожидание игроков</div>}
+      {s.players.length === 0 && <div className="absolute inset-x-0 bottom-6 text-center text-white/40 font-bold">Ожидание игроков</div>}
       <div className="absolute w-7 h-7 rounded-full bg-white shadow-[0_0_20px_#fff] -translate-x-1/2 -translate-y-1/2" style={{ left: `${ball.x * 100}%`, top: `${ball.y * 100}%` }} />
     </div>
   );

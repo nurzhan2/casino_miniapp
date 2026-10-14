@@ -32,7 +32,7 @@ export default function Roulette() {
       await new Promise(s => setTimeout(s, 4200));
       setRes(r);
       setLog(l => [{ ...r, id: Date.now() }, ...l].slice(0, 10));
-      if (r.payout > 0) { haptic('success'); fxWin(r.payout, r.multiplier, amount); } else { haptic('error'); fxLose('Мимо'); }
+      if (r.payout > amount) { haptic('success'); fxWin(r.payout, r.multiplier, amount); } else { haptic('error'); fxLose('Мимо'); }
       refresh();
     } catch (e: any) { toast(e.message, 'err'); } finally { busy.current = false; setSpin(false); }
   };

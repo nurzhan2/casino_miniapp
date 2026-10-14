@@ -62,7 +62,10 @@ const WHEEL = [
   { p: 0.002, m: 50, label: '×50' },
 ];
 export function rouletteTable(rtp = getSetting('rtp')) {
-  const wins = scaleToRTP(WHEEL, rtp);
+  // множители на секторах честные, под RTP подгоняются шансы, а не выплаты
+  const ev = WHEEL.reduce((s, w) => s + w.p * w.m, 0);
+  const k = Math.min(1 / WHEEL.reduce((s, w) => s + w.p, 0), rtp / ev);
+  const wins = WHEEL.map(w => ({ ...w, p: w.p * k }));
   const lose = 1 - wins.reduce((s, w) => s + w.p, 0);
   return [...wins, { p: lose, m: 0, label: 'мимо' }];
 }

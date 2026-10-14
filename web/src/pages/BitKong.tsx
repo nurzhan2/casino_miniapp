@@ -53,7 +53,7 @@ export default function BitKong() {
       <div className="card p-4">
         <div className="flex items-baseline justify-between">
           <div className="font-display">{lv.rate}% <span className="text-lime">/ {lv.name}</span></div>
-          {lv.next && <div className="text-xs text-white/50">ещё {fmt(lv.next.wagered - me.wagered)}★ до {lv.next.rate}%</div>}
+          {lv.next && <div className="text-xs text-white/50">ещё {fmt(lv.next.wagered - me.wagered)}★ до {lv.index + 1} ур.</div>}
         </div>
         <div className="h-2.5 bg-moss rounded-full mt-3 overflow-hidden wave-bar">
           <div className="h-full bg-lime rounded-full transition-all" style={{ width: `${progress * 100}%` }} />
